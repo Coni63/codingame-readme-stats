@@ -1,8 +1,9 @@
-import requests
 import json
-import fake_data
+import requests
 import asyncio
-import constants
+
+from config import constants
+from config import fake_data
 
 async def _fetch(url, data, session):    
     async with session.request('POST', url=url, data=json.dumps(data), headers=constants.CG_headers) as r: 

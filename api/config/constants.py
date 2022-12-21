@@ -5,6 +5,7 @@ CG_USER_ACHIEVEMENTS   = "https://www.codingame.com/services/Achievement/findByC
 
 
 CG_headers             = {
-    "Content-Type": "application/json"
+    "Content-Type": "application/json;charset=UTF-8",
+    "accept": "application/json"
 }
 

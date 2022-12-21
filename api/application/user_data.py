@@ -1,14 +1,14 @@
-import constants
-import codingame_api
-
 import aiohttp
 import asyncio
 import json 
 
-from interfaces.i_user_info import IUserDto
-from interfaces.i_language import ILanguageDto
-from interfaces.i_certification import ICertificationDto
-from interfaces.i_achievement import IAchievementDto
+from config import constants
+from infrastructure import codingame_api
+
+from domain.i_user_info import IUserDto
+from domain.i_language import ILanguageDto
+from domain.i_certification import ICertificationDto
+from domain.i_achievement import IAchievementDto
 
 async def _get_user_data(codingamer, session):
     user_json  = await codingame_api.get_info_for(codingamer, session)
@@ -46,8 +46,8 @@ async def get_all_data(codingamer:str) -> dict:
         languages, certifications, achievements = ans
 
     return {
-        "user": user.codingamer.userId,
-        "a": len(achievements),
-        "b": len(languages),
-        "c": len(certifications),
+        "user": user,
+        "languages": languages,
+        "certifications": certifications,
+        "achievements": achievements,
     }
