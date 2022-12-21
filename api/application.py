@@ -1,35 +1,49 @@
 import constants
 import codingame_api
 
+import aiohttp
+import asyncio
+import json 
+
 from interfaces.i_user_info import IUserDto
 from interfaces.i_language import ILanguageDto
 from interfaces.i_certification import ICertificationDto
 from interfaces.i_achievement import IAchievementDto
 
-def _get_user_data(codingamer):
-    user_json  = codingame_api.get_info_for(codingamer)
+async def _get_user_data(codingamer, session):
+    user_json  = await codingame_api.get_info_for(codingamer, session)
     return IUserDto.from_dict(user_json)
 
-def _get_languages_used_by(userid):
-    languages_json = codingame_api.get_languages_used_by(userid)
+async def _get_languages_used_by(userid, session):
+    languages_json = await codingame_api.get_languages_used_by(userid, session)
     return ILanguageDto.schema().load(languages_json, many=True)
 
-def _get_certifications_for(userid):
-    certifications_json = codingame_api.get_certifications_for(userid)
+async def _get_certifications_for(userid, session):
+    certifications_json = await codingame_api.get_certifications_for(userid, session)
     return ICertificationDto.schema().load(certifications_json, many=True)
 
-def _get_achievements_for(userid):
-    achievement_json = codingame_api.get_achievements_for(userid)
+async def _get_achievements_for(userid, session):
+    achievement_json = await codingame_api.get_achievements_for(userid, session)
     return IAchievementDto.schema().load(achievement_json, many=True)
 
-def get_all_data(codingamer:str) -> dict:
-    user = _get_user_data(codingamer)
+async def _fetch(url, data, session):    
+    async with session.request('POST', url=url, data=data, headers=constants.CG_headers) as r: 
+        return await r.json()
 
-    userid = user.codingamer.userId
+async def get_all_data(codingamer:str) -> dict:
+    async with aiohttp.ClientSession() as session:
+        user = await _get_user_data(codingamer, session)
+        userid = user.codingamer.userId
 
-    languages = _get_languages_used_by(userid)
-    certifications = _get_certifications_for(userid)
-    achievements = _get_achievements_for(userid)
+    async with aiohttp.ClientSession() as session:
+        tasks = [
+            asyncio.ensure_future(_get_languages_used_by(userid, session)),
+            asyncio.ensure_future(_get_certifications_for(userid, session)),
+            asyncio.ensure_future(_get_achievements_for(userid, session))
+        ]
+
+        ans = await asyncio.gather(*tasks)
+        languages, certifications, achievements = ans
 
     return {
         "user": user.codingamer.userId,

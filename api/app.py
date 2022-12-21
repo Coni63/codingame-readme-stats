@@ -1,6 +1,7 @@
 from flask import Flask, request
 from flask_cors import CORS
 
+import asyncio
 import application
 import codingame_api
 
@@ -9,7 +10,7 @@ CORS(app)
 
 @app.route("/api/details/<codingamer>", methods=['GET'])
 def get_card_for(codingamer):
-    data = application.get_all_data(codingamer)
+    data = asyncio.run(application.get_all_data(codingamer))
 
     if data is not None:
         return data, 200
