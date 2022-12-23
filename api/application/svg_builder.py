@@ -25,12 +25,26 @@ def place_icon(svg_encoded, nth_position=1, line_color="#000000"):
     svg_element.root.getchildren()[0].getchildren()[0].set("fill", line_color)
     return svg_element
 
+def place_icon2(svg_encoded, nth_position=1, line_color="#000000"):
+    svg_element: svgutils.transform.SVGFigure = svgutils.transform.fromstring(decode_svg(svg_encoded)).getroot()
+    svg_element.moveto(*get_position2(nth_position), get_scale()*0.5)
+    svg_element.root.getchildren()[0].set("fill", line_color)
+    return svg_element
+
 def get_square(context, nth_position, bg_color):
     s = get_scale() * 29
     color = hex_to_rgb(bg_color)
     context.set_source_rgb(*color)
     # context.rectangle(*get_position(nth_position), s, s)  # x, y, width, height
     roundrect(context, *get_position(nth_position), s, s, 5)
+    context.fill()
+
+def get_square2(context, nth_position, bg_color):
+    s = get_scale() * 29
+    color = hex_to_rgb(bg_color)
+    context.set_source_rgb(*color)
+    # context.rectangle(*get_position(nth_position), s, s)  # x, y, width, height
+    roundrect(context, *get_position2(nth_position), s, s, 5)
     context.fill()
 
 def get_certif_label(context, nth_position, text, bg_color):
@@ -86,6 +100,9 @@ def get_title(context, text, font_color):
 def get_position(n = 1):
     return (160, n * 25 + 20)
 
+def get_position2(n = 1):
+    return (365, n * 25 + 20)
+
 def get_scale():
     return 0.66
 
@@ -132,7 +149,6 @@ def render(data):
         # creating a cairo context object
         context = cairo.Context(surface)
 
-
         draw_borders(context, constants.COLOR_LEGEND)
 
         # pie with score & note
@@ -146,6 +162,14 @@ def render(data):
         get_square(context, 3.5, constants.COLOR_SILVER)
         get_square(context, 4.5, constants.COLOR_BRONZE)
         get_square(context, 5.5, constants.COLOR_LEGEND)
+
+        # 
+        get_square2(context, 1, constants.COLOR_LEGEND)
+        get_square2(context, 2, constants.COLOR_GOLD)
+        get_square2(context, 3, constants.COLOR_SILVER)
+        get_square2(context, 4, constants.COLOR_BRONZE)
+        get_square2(context, 5, constants.COLOR_LEGEND)
+        get_square2(context, 6, constants.COLOR_LEGEND)
 
         # LABEL CERTIFS
         s = "{title}:{ranking}"
@@ -182,10 +206,33 @@ def render(data):
     SVG_speed = place_icon(constants.SVG_speed, nth_position=4.5)
     SVG_AI = place_icon(constants.SVG_AI, nth_position=5.5)
 
+    # load icons for stats
+    SVG_GLOBAL_RANK = place_icon2(constants.SVG_GLOBAL_RANK, nth_position=1)
+    SVG_PUZZLE_SOLVED = place_icon2(constants.SVG_PUZZLE_SOLVED, nth_position=2)
+    SVG_LEVEL = place_icon2(constants.SVG_LEVEL, nth_position=3)
+    SVG_SUCCESS = place_icon2(constants.SVG_SUCCESS, nth_position=4)
+    SVG_BEST_LANGUAGE = place_icon2(constants.SVG_BEST_LANGUAGE, nth_position=5)
+    SVG_HIGHEST_COMP = place_icon2(constants.SVG_HIGHEST_COMP, nth_position=6)
+
+    all_elements = [
+        card, 
+        SVG_collaboration, 
+        SVG_algorithmes, 
+        SVG_optimization, 
+        SVG_speed, 
+        SVG_AI, 
+        SVG_GLOBAL_RANK,
+        SVG_PUZZLE_SOLVED,
+        SVG_LEVEL,
+        SVG_SUCCESS,
+        SVG_BEST_LANGUAGE,
+        SVG_HIGHEST_COMP
+    ]
+
     # merge all svg in one
     fig = svgutils.transform.SVGFigure()
     fig.set_size(("{constants.SVG_width}px", "{constants.SVG_height}px"))
-    fig.append([card, SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI])
+    fig.append(all_elements)
     return fig.to_str()
 
 
