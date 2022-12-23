@@ -121,6 +121,16 @@ def get_height(n = 1, padding=26, top_offset=45):
     return (n-1) * padding + top_offset
 
 def render(data):
+    username = data.user.codingamer.pseudo
+
+    level = data.user.codingamer.level
+    color_level = leveler.get_color_level(level)
+
+    certif = leveler.get_color_certificate(data.certifications, order=['COLLABORATION', 'ALGORITHMS', 'OPTIMIZATION', 'CODING_SPEED', 'AI'])
+
+    language, color_language = leveler.get_best_language(data.languages)
+    total_solved, color_total_solved = leveler.get_total_solved(data.languages)
+
     f = BytesIO()
 
     s = "{title}:{ranking}"
@@ -133,7 +143,7 @@ def render(data):
 
         draw_borders(context, constants.COLOR_LEGEND)
 
-        get_title(context, "username", 20, 35, font_color=constants.COLOR_LEGEND)
+        get_title(context, username, 20, 35, font_color=constants.COLOR_LEGEND)
         
         # pie with score & note
         y_pie = 35 + (constants.SVG_height - 35) // 2
@@ -144,36 +154,36 @@ def render(data):
 
         # SQUARE BACKGROUND FOR STATS SVG
         get_square(context, c1+30, get_height(1), constants.COLOR_LEGEND)
-        get_square(context, c1+30, get_height(2), constants.COLOR_GOLD)
-        get_square(context, c1+30, get_height(3), constants.COLOR_SILVER)
+        get_square(context, c1+30, get_height(2), color_total_solved)
+        get_square(context, c1+30, get_height(3), color_level)
         get_square(context, c1+30, get_height(4), constants.COLOR_BRONZE)
-        get_square(context, c1+30, get_height(5), constants.COLOR_LEGEND)
+        get_square(context, c1+30, get_height(5), color_language)
         get_square(context, c1+30, get_height(6), constants.COLOR_LEGEND)
 
         # LABEL STATS
-        set_text(context, c1+60, get_height(1), s.format(title="Global Rank", ranking="1234/654321"), constants.COLOR_LEGEND)
-        set_text(context, c1+60, get_height(2), s.format(title="Puzzle Solved", ranking="530"), constants.COLOR_GOLD)
-        set_text(context, c1+60, get_height(3), s.format(title="Level", ranking="38"), constants.COLOR_SILVER)
-        set_text(context, c1+60, get_height(4), s.format(title="Success", ranking="350/500"), constants.COLOR_BRONZE)
-        set_text(context, c1+60, get_height(5), s.format(title="Best Language", ranking="Python"), constants.COLOR_LEGEND)
-        set_text(context, c1+60, get_height(6), s.format(title="Highest Compet.", ranking="1200/15000"), constants.COLOR_LEGEND)
+        set_text(context, c1+60, get_height(1), s.format(title="Global Rank",     ranking="1234/654321"), constants.COLOR_LEGEND)
+        set_text(context, c1+60, get_height(2), s.format(title="Puzzle Solved",   ranking=total_solved) , color_total_solved)
+        set_text(context, c1+60, get_height(3), s.format(title="Level",           ranking=level)        , color_level)
+        set_text(context, c1+60, get_height(4), s.format(title="Success",         ranking="350/500")    , constants.COLOR_BRONZE)
+        set_text(context, c1+60, get_height(5), s.format(title="Best Language",   ranking=language)     , color_language)
+        set_text(context, c1+60, get_height(6), s.format(title="Highest Compet.", ranking="1200/15000") , constants.COLOR_LEGEND)
 
         # DRAW SEPARATORS
         draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
 
         # SQUARE BACKGROUND FOR CERTIFS SVG
-        get_square(context, c2+30, get_height(1.5), constants.COLOR_LEGEND)
-        get_square(context, c2+30, get_height(2.5), constants.COLOR_GOLD)
-        get_square(context, c2+30, get_height(3.5), constants.COLOR_SILVER)
-        get_square(context, c2+30, get_height(4.5), constants.COLOR_BRONZE)
-        get_square(context, c2+30, get_height(5.5), constants.COLOR_LEGEND)
+        get_square(context, c2+30, get_height(1.5), certif[0][1])
+        get_square(context, c2+30, get_height(2.5), certif[1][1])
+        get_square(context, c2+30, get_height(3.5), certif[2][1])
+        get_square(context, c2+30, get_height(4.5), certif[3][1])
+        get_square(context, c2+30, get_height(5.5), certif[4][1])
 
         # LABEL CERTIFS
-        set_text(context, c2+60, get_height(1.5), s.format(title="Collaboration", ranking="LEGEND"), constants.COLOR_LEGEND)
-        set_text(context, c2+60, get_height(2.5), s.format(title="Algorithmes", ranking="GOLD"), constants.COLOR_GOLD)
-        set_text(context, c2+60, get_height(3.5), s.format(title="Optimization", ranking="SILVER"), constants.COLOR_SILVER)
-        set_text(context, c2+60, get_height(4.5), s.format(title="Coding Speed", ranking="BRONZE"), constants.COLOR_BRONZE)
-        set_text(context, c2+60, get_height(5.5), s.format(title="AI", ranking="LEGEND"), constants.COLOR_LEGEND)
+        set_text(context, c2+60, get_height(1.5), s.format(title="Collaboration", ranking=certif[0][0]), certif[0][1])
+        set_text(context, c2+60, get_height(2.5), s.format(title="Algorithmes",   ranking=certif[1][0]), certif[1][1])
+        set_text(context, c2+60, get_height(3.5), s.format(title="Optimization",  ranking=certif[2][0]), certif[2][1])
+        set_text(context, c2+60, get_height(4.5), s.format(title="Coding Speed",  ranking=certif[3][0]), certif[3][1])
+        set_text(context, c2+60, get_height(5.5), s.format(title="AI",            ranking=certif[4][0]), certif[4][1])
 
         # getting all the svg versions available
         versions = surface.get_versions()
@@ -182,19 +192,19 @@ def render(data):
     card = etree.XML(f.getvalue())
 
     # load icons for stats
-    SVG_GLOBAL_RANK   = place_other_icon(constants.SVG_GLOBAL_RANK, c1+30, get_height(1))
+    SVG_GLOBAL_RANK   = place_other_icon(constants.SVG_GLOBAL_RANK,   c1+30, get_height(1))
     SVG_PUZZLE_SOLVED = place_other_icon(constants.SVG_PUZZLE_SOLVED, c1+30, get_height(2))
-    SVG_LEVEL         = place_other_icon(constants.SVG_LEVEL, c1+30, get_height(3))
-    SVG_SUCCESS       = place_other_icon(constants.SVG_SUCCESS, c1+30, get_height(4))
+    SVG_LEVEL         = place_other_icon(constants.SVG_LEVEL,         c1+30, get_height(3))
+    SVG_SUCCESS       = place_other_icon(constants.SVG_SUCCESS,       c1+30, get_height(4))
     SVG_BEST_LANGUAGE = place_other_icon(constants.SVG_BEST_LANGUAGE, c1+30, get_height(5))
-    SVG_HIGHEST_COMP  = place_other_icon(constants.SVG_HIGHEST_COMP, c1+30, get_height(6))
+    SVG_HIGHEST_COMP  = place_other_icon(constants.SVG_HIGHEST_COMP,  c1+30, get_height(6))
 
     # load icons from constants (extracted from CG)
     SVG_collaboration = place_icon_from_CG(constants.SVG_collaboration, c2+30, get_height(1.5))
-    SVG_algorithmes   = place_icon_from_CG(constants.SVG_algorithmes, c2+30, get_height(2.5))
-    SVG_optimization  = place_icon_from_CG(constants.SVG_optimization, c2+30, get_height(3.5))
-    SVG_speed         = place_icon_from_CG(constants.SVG_speed, c2+30, get_height(4.5))
-    SVG_AI            = place_icon_from_CG(constants.SVG_AI, c2+30, get_height(5.5))
+    SVG_algorithmes   = place_icon_from_CG(constants.SVG_algorithmes,   c2+30, get_height(2.5))
+    SVG_optimization  = place_icon_from_CG(constants.SVG_optimization,  c2+30, get_height(3.5))
+    SVG_speed         = place_icon_from_CG(constants.SVG_speed,         c2+30, get_height(4.5))
+    SVG_AI            = place_icon_from_CG(constants.SVG_AI,            c2+30, get_height(5.5))
 
 
     all_elements = [
