@@ -1,11 +1,10 @@
 from config import constants
-
+import math
 
 
 
 def get_global_rank(score):
     return "S"
-
 
 def get_color_level(level):
     if level <= 8:
@@ -121,3 +120,35 @@ def get_score_rank(user):
     last_rank = user.codingamePointsRankingDto.numberCodingamersGlobal
 
     return (rank, last_rank), get_color_rank(rank / last_rank)
+
+
+def get_color_competition(rate):
+    if rate <= 100:
+        return constants.COLOR_WOOD
+    elif rate <= 750:
+        return constants.COLOR_BRONZE
+    elif rate <= 1500:
+        return constants.COLOR_SILVER
+    elif rate <= 4000:
+        return constants.COLOR_GOLD
+    else:
+        return constants.COLOR_LEGEND
+
+def get_points_from_rank(position, total):
+    return math.pow((5000 * min(total/500, 1)), ((total - position + 1) / total))
+
+def get_score_competition(rankings, online=False):
+    if online:
+        top = max(rankings.challenges, key=lambda x: x.points)
+
+        points = get_points_from_rank(top.ranking, top.total)
+        print(points)
+        return (top.ranking, top.total), get_color_competition(points)
+    else:
+        f = [x for x in rankings.puzzles if x.puzzleType == "BOT_PROGRAMMING"]
+        top = max(f, key=lambda x: x.points)
+
+        return (top.ranking, top.totalPlayers), get_color_competition(top.points)
+
+def get_main_level(data):
+    return (constants.COLOR_GOLD, constants.COLOR_WOOD, get_global_rank(0))

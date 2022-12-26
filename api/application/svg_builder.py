@@ -89,7 +89,7 @@ def hex_to_rgb(value):
     b = value[4:]
     return (int(r, 16)/255.0, int(g, 16)/255.0, int(b, 16)/255.0)
 
-def create_pie(context, x, y, radius, score, active_color, passive_color, font_size_big=35):
+def create_pie(context, x, y, radius, score, active_color, passive_color, label, font_size_big=35):
     start_angle = 3*math.pi/2
     end_angle = 3*math.pi/2 + 2*math.pi*score/100
 
@@ -111,7 +111,6 @@ def create_pie(context, x, y, radius, score, active_color, passive_color, font_s
     context.set_font_size(font_size_big)
 
     # center the text within the circle
-    label = leveler.get_global_rank(score)
     (x_, y_, width, height, dx, dy) = context.text_extents(label)
     context.move_to(x - width/2, y + height/2)    
     context.show_text(label)
@@ -135,6 +134,10 @@ def render(data):
 
     (user_rank, last_rank), color_user_rank = leveler.get_score_rank(data.user)
 
+    (best_comp_rank, total_comp_player), color_competition = leveler.get_score_competition(data.rankings, online=True)
+
+    (active_color, passive_color, label) = leveler.get_main_level(data)
+
     f = BytesIO()
 
     s = "{title}:{ranking}"
@@ -145,24 +148,24 @@ def render(data):
         # creating a cairo context object
         context = cairo.Context(surface)
 
-        draw_borders(context, constants.COLOR_LEGEND)
+        draw_borders(context, active_color)
 
-        get_title(context, username, 20, 35, font_color=constants.COLOR_LEGEND)
+        get_title(context, username, 20, 35, font_color=active_color)
         
         # pie with score & note
         y_pie = 35 + (constants.SVG_height - 35) // 2
-        create_pie(context, 80, y_pie, 50, 65, active_color=constants.COLOR_LEGEND, passive_color=constants.COLOR_SILVER)
+        create_pie(context, 80, y_pie, 50, 65, active_color=active_color, passive_color=passive_color, label=label)
 
         # DRAW SEPARATORS
-        draw_line(context, c1, 55, c1, constants.SVG_height-20, constants.COLOR_LEGEND)
+        draw_line(context, c1, 55, c1, constants.SVG_height-20, active_color)
 
         # SQUARE BACKGROUND FOR STATS SVG
-        get_square(context, c1+30, get_height(1), constants.COLOR_LEGEND)
+        get_square(context, c1+30, get_height(1), color_user_rank)
         get_square(context, c1+30, get_height(2), color_total_solved)
         get_square(context, c1+30, get_height(3), color_level)
         get_square(context, c1+30, get_height(4), color_achivements)
         get_square(context, c1+30, get_height(5), color_language)
-        get_square(context, c1+30, get_height(6), constants.COLOR_LEGEND)
+        get_square(context, c1+30, get_height(6), color_competition)
 
         # LABEL STATS
         set_text(context, c1+60, get_height(1), s.format(title="Global Rank",     ranking=f"{user_rank}/{last_rank}"), color_user_rank)
@@ -170,7 +173,7 @@ def render(data):
         set_text(context, c1+60, get_height(3), s.format(title="Level",           ranking=level)        , color_level)
         set_text(context, c1+60, get_height(4), s.format(title="Success",         ranking=f"{count_solved}/{count_available}"), color_achivements)
         set_text(context, c1+60, get_height(5), s.format(title="Best Language",   ranking=language)     , color_language)
-        set_text(context, c1+60, get_height(6), s.format(title="Highest Compet.", ranking="1200/15000") , constants.COLOR_LEGEND)
+        set_text(context, c1+60, get_height(6), s.format(title="Highest Compet.", ranking=f"{best_comp_rank}/{total_comp_player}") , color_competition)
 
         # DRAW SEPARATORS
         draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
