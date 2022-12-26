@@ -36,3 +36,10 @@ async def get_achievements_for(userid, session):
     
     await asyncio.sleep(0.1)
     return fake_data.FAKE_ACHIVEMENTS
+
+async def get_ranking_for(userid, session):
+    # json = [userid]
+    # return await _fetch(constants.CG_USER_RANKINGS, json, session)
+    
+    await asyncio.sleep(0.1)
+    return fake_data.FAKE_RANKING
