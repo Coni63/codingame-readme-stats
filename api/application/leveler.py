@@ -73,3 +73,51 @@ def get_best_language(languages):
 def get_total_solved(languages):
     total = sum(x.puzzleCount for x in languages)
     return total, get_color_total_solved(total)
+
+def get_color_achievements(rate):
+    if rate <= 0.25:
+        return constants.COLOR_WOOD
+    elif rate <= 0.50:
+        return constants.COLOR_BRONZE
+    elif rate <= 0.70:
+        return constants.COLOR_SILVER
+    elif rate <= 0.85:
+        return constants.COLOR_GOLD
+    else:
+        return constants.COLOR_LEGEND
+
+def get_score_achievements(achievements):
+    skip = ["coder", "social"]
+    total_solved = 0
+    total_available = 0
+    count_solved  = 0
+    count_available = 0
+    for achievement in achievements:
+        if achievement.categoryId in skip:
+            continue
+
+        if achievement.completionTime > 0:
+            total_solved += achievement.weight
+            count_solved += 1
+
+        total_available += achievement.weight
+        count_available += 1
+    return (count_solved, count_available), get_color_achievements(total_solved / total_available)
+
+def get_color_rank(rate):
+    if rate <= 0.0025:
+        return constants.COLOR_LEGEND
+    elif rate <= 0.0075:
+        return constants.COLOR_GOLD
+    elif rate <= 0.0225:
+        return constants.COLOR_SILVER
+    if rate <= 0.0675:
+        return constants.COLOR_BRONZE
+    else:
+        return constants.COLOR_WOOD
+
+def get_score_rank(user):
+    rank = user.codingamer.rank
+    last_rank = user.codingamePointsRankingDto.numberCodingamersGlobal
+
+    return (rank, last_rank), get_color_rank(rank / last_rank)

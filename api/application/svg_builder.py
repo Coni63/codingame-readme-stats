@@ -131,6 +131,10 @@ def render(data):
     language, color_language = leveler.get_best_language(data.languages)
     total_solved, color_total_solved = leveler.get_total_solved(data.languages)
 
+    (count_solved, count_available), color_achivements = leveler.get_score_achievements(data.achievements)
+
+    (user_rank, last_rank), color_user_rank = leveler.get_score_rank(data.user)
+
     f = BytesIO()
 
     s = "{title}:{ranking}"
@@ -156,15 +160,15 @@ def render(data):
         get_square(context, c1+30, get_height(1), constants.COLOR_LEGEND)
         get_square(context, c1+30, get_height(2), color_total_solved)
         get_square(context, c1+30, get_height(3), color_level)
-        get_square(context, c1+30, get_height(4), constants.COLOR_BRONZE)
+        get_square(context, c1+30, get_height(4), color_achivements)
         get_square(context, c1+30, get_height(5), color_language)
         get_square(context, c1+30, get_height(6), constants.COLOR_LEGEND)
 
         # LABEL STATS
-        set_text(context, c1+60, get_height(1), s.format(title="Global Rank",     ranking="1234/654321"), constants.COLOR_LEGEND)
+        set_text(context, c1+60, get_height(1), s.format(title="Global Rank",     ranking=f"{user_rank}/{last_rank}"), color_user_rank)
         set_text(context, c1+60, get_height(2), s.format(title="Puzzle Solved",   ranking=total_solved) , color_total_solved)
         set_text(context, c1+60, get_height(3), s.format(title="Level",           ranking=level)        , color_level)
-        set_text(context, c1+60, get_height(4), s.format(title="Success",         ranking="350/500")    , constants.COLOR_BRONZE)
+        set_text(context, c1+60, get_height(4), s.format(title="Success",         ranking=f"{count_solved}/{count_available}"), color_achivements)
         set_text(context, c1+60, get_height(5), s.format(title="Best Language",   ranking=language)     , color_language)
         set_text(context, c1+60, get_height(6), s.format(title="Highest Compet.", ranking="1200/15000") , constants.COLOR_LEGEND)
 
