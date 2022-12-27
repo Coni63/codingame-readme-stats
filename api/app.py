@@ -3,16 +3,16 @@ import asyncio
 from flask import Flask, request
 from flask_cors import CORS
 
-import application.user_data 
-import application.svg_builder
+from application import user_data, svg_builder, leveler
 
 app = Flask(__name__)
 CORS(app)
 
 @app.route("/api/details/<codingamer>", methods=['GET'])
 def get_card_for(codingamer):
-    user_datas = asyncio.run(application.user_data.get_all_data(codingamer))
-    svg = application.svg_builder.render(user_datas)
+    user_datas = asyncio.run(user_data.get_all_data(codingamer))
+    profile_data = leveler.get_profile_data(user_datas)
+    svg = svg_builder.render(profile_data)
 
     if svg is not None:
         return svg, 200

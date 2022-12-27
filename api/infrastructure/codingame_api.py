@@ -1,6 +1,7 @@
 import json
 import requests
 import asyncio
+import math
 
 from config import constants
 from config import fake_data
@@ -43,3 +44,7 @@ async def get_ranking_for(userid, session):
     
     await asyncio.sleep(0.1)
     return fake_data.FAKE_RANKING
+
+
+def get_points_from_rank(position, total):
+    return math.pow((5000 * min(total/500, 1)), ((total - position + 1) / total))

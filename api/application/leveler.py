@@ -1,12 +1,46 @@
 from config import constants
 import math
 
+from domain.i_data import IDataDto
+from domain.i_profile import IProfileDto, IValue
+from domain.i_language import ILanguageDto
+from domain.i_achievement import IAchievementDto
+from domain.i_certification import ICertificationDto
+from domain.i_ranking import IRankingDto
+from domain.i_user_info import IUserDto
 
+from infrastructure.codingame_api import get_points_from_rank
 
-def get_global_rank(score):
+def get_profile_data(data: IDataDto) -> IProfileDto:
+    (active_color, passive_color, score, label) = get_main_level(data)
+
+    level_value = get_score_level(data.user)
+    certif_value = get_score_certificate(data.certifications)
+    top_language_value = get_score_best_language(data.languages)
+    puzzle_solved_value = get_score_total_solved(data.languages)
+    achievements_value = get_score_achievements(data.achievements)
+    rank_value = get_score_rank(data.user)
+    comp_value = get_score_competition(data.rankings, online=True)
+
+    return IProfileDto(
+        username=data.user.codingamer.pseudo,
+        active_color = active_color,
+        passive_color = passive_color,
+        main_rank = label,
+        level = level_value,
+        certifications=certif_value,
+        language = top_language_value,
+        puzzle_solved = puzzle_solved_value,
+        achievements = achievements_value,
+        rank = rank_value,
+        competition = comp_value,
+        score = score
+    )
+
+def get_global_label(score: float) -> str:
     return "S"
 
-def get_color_level(level):
+def get_color_level(level: int) -> str:
     if level <= 8:
         return constants.COLOR_WOOD
     elif level <= 15:
@@ -18,7 +52,7 @@ def get_color_level(level):
     else:
         return constants.COLOR_LEGEND
 
-def get_color_from_string(string):
+def get_color_from_string(string: str) -> str:
     if string == "WOOD":
         return constants.COLOR_WOOD
     elif string == "BRONZE":
@@ -32,7 +66,7 @@ def get_color_from_string(string):
     else:
         return constants.COLOR_WOOD
 
-def get_color_language(puzzle_solved):
+def get_color_language(puzzle_solved: int) -> str:
     if puzzle_solved <= 10:
         return constants.COLOR_WOOD
     elif puzzle_solved <= 25:
@@ -44,7 +78,7 @@ def get_color_language(puzzle_solved):
     else:
         return constants.COLOR_LEGEND
 
-def get_color_total_solved(puzzle_solved):
+def get_color_total_solved(puzzle_solved: int) -> str:
     if puzzle_solved <= 25:
         return constants.COLOR_WOOD
     elif puzzle_solved <= 50:
@@ -56,24 +90,7 @@ def get_color_total_solved(puzzle_solved):
     else:
         return constants.COLOR_LEGEND
 
-def get_color_certificate(certifications, order):
-    ans = [("WOOD", constants.COLOR_WOOD) for _ in range(len(order))]
-    for certification in certifications:
-        idx = order.index(certification.category)
-        level = certification.level
-        ans[idx] = (level, get_color_from_string(level))
-    return ans
-
-def get_best_language(languages):
-    top = max(languages, key=lambda x:x.puzzleCount)
-    return top.languageName, get_color_language(top.puzzleCount)
-
-
-def get_total_solved(languages):
-    total = sum(x.puzzleCount for x in languages)
-    return total, get_color_total_solved(total)
-
-def get_color_achievements(rate):
+def get_color_achievements(rate: float) -> str:
     if rate <= 0.25:
         return constants.COLOR_WOOD
     elif rate <= 0.50:
@@ -85,7 +102,56 @@ def get_color_achievements(rate):
     else:
         return constants.COLOR_LEGEND
 
-def get_score_achievements(achievements):
+def get_color_rank(rate: float) -> str:
+    if rate <= 0.0025:
+        return constants.COLOR_LEGEND
+    elif rate <= 0.0075:
+        return constants.COLOR_GOLD
+    elif rate <= 0.0225:
+        return constants.COLOR_SILVER
+    if rate <= 0.0675:
+        return constants.COLOR_BRONZE
+    else:
+        return constants.COLOR_WOOD
+
+def get_color_competition(rate: float) -> str:
+    if rate <= 100:
+        return constants.COLOR_WOOD
+    elif rate <= 750:
+        return constants.COLOR_BRONZE
+    elif rate <= 1500:
+        return constants.COLOR_SILVER
+    elif rate <= 4000:
+        return constants.COLOR_GOLD
+    else:
+        return constants.COLOR_LEGEND
+
+def get_score_level(user: IUserDto) -> IValue:
+    return IValue(
+        value=user.codingamer.level, 
+        color=get_color_level(user.codingamer.level)
+    )
+
+def get_score_certificate(certifications: list[ICertificationDto]) -> list[IValue]:
+    order=['COLLABORATION', 'ALGORITHMS', 'OPTIMIZATION', 'CODING_SPEED', 'AI']
+
+    ans = [IValue(value="WOOD", color=constants.COLOR_WOOD) for _ in range(len(order))]
+    for certification in certifications:
+        idx = order.index(certification.category)
+        level = certification.level
+        ans[idx] = IValue(value=level, color=get_color_from_string(level))
+    return ans
+
+def get_score_best_language(languages: list[ILanguageDto]) -> IValue:
+    top = max(languages, key=lambda x:x.puzzleCount)
+    return IValue(value=top.languageName, color=get_color_language(top.puzzleCount))
+
+
+def get_score_total_solved(languages: list[ILanguageDto]) -> IValue:
+    total = sum(x.puzzleCount for x in languages)
+    return IValue(value=total, color=get_color_total_solved(total))
+
+def get_score_achievements(achievements: list[IAchievementDto]) -> IValue:
     skip = ["coder", "social"]
     total_solved = 0
     total_available = 0
@@ -101,41 +167,14 @@ def get_score_achievements(achievements):
 
         total_available += achievement.weight
         count_available += 1
-    return (count_solved, count_available), get_color_achievements(total_solved / total_available)
+    
+    return IValue(value=f"{count_solved}/{count_available}", color=get_color_achievements(total_solved / total_available))
 
-def get_color_rank(rate):
-    if rate <= 0.0025:
-        return constants.COLOR_LEGEND
-    elif rate <= 0.0075:
-        return constants.COLOR_GOLD
-    elif rate <= 0.0225:
-        return constants.COLOR_SILVER
-    if rate <= 0.0675:
-        return constants.COLOR_BRONZE
-    else:
-        return constants.COLOR_WOOD
-
-def get_score_rank(user):
+def get_score_rank(user: IUserDto) -> IValue:
     rank = user.codingamer.rank
     last_rank = user.codingamePointsRankingDto.numberCodingamersGlobal
 
-    return (rank, last_rank), get_color_rank(rank / last_rank)
-
-
-def get_color_competition(rate):
-    if rate <= 100:
-        return constants.COLOR_WOOD
-    elif rate <= 750:
-        return constants.COLOR_BRONZE
-    elif rate <= 1500:
-        return constants.COLOR_SILVER
-    elif rate <= 4000:
-        return constants.COLOR_GOLD
-    else:
-        return constants.COLOR_LEGEND
-
-def get_points_from_rank(position, total):
-    return math.pow((5000 * min(total/500, 1)), ((total - position + 1) / total))
+    return IValue(value=f"{rank}/{last_rank}", color=get_color_rank(rank / last_rank))
 
 def get_score_competition(rankings, online=False):
     if online:
@@ -143,12 +182,14 @@ def get_score_competition(rankings, online=False):
 
         points = get_points_from_rank(top.ranking, top.total)
         print(points)
-        return (top.ranking, top.total), get_color_competition(points)
+        return IValue(value=f"{top.ranking}/{top.total}", color=get_color_competition(points))
     else:
         f = [x for x in rankings.puzzles if x.puzzleType == "BOT_PROGRAMMING"]
         top = max(f, key=lambda x: x.points)
+        return IValue(value=f"{top.ranking}/{top.totalPlayers}", color=get_color_competition(top.points))
 
-        return (top.ranking, top.totalPlayers), get_color_competition(top.points)
-
-def get_main_level(data):
-    return (constants.COLOR_GOLD, constants.COLOR_WOOD, get_global_rank(0))
+def get_main_level(data: IDataDto) -> tuple[str, str, str]:
+    main_color = constants.COLOR_LEGEND
+    back_color = constants.BACK_COLOR[main_color]
+    score = 99
+    return (main_color, back_color, score, get_global_label(score))

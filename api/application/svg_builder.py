@@ -1,14 +1,14 @@
 import math
 
 import cairo
-from io import BytesIO, StringIO
+from io import BytesIO
 
 from config import constants
 import base64 
 import svgutils
 from lxml import etree
 
-from application import leveler
+from domain.i_profile import IProfileDto
 
 def roundrect(context, x, y, width, height, r):
     context.arc(x+r, y+r, r, math.pi, 3*math.pi/2)
@@ -119,25 +119,7 @@ def create_pie(context, x, y, radius, score, active_color, passive_color, label,
 def get_height(n = 1, padding=26, top_offset=45):
     return (n-1) * padding + top_offset
 
-def render(data):
-    username = data.user.codingamer.pseudo
-
-    level = data.user.codingamer.level
-    color_level = leveler.get_color_level(level)
-
-    certif = leveler.get_color_certificate(data.certifications, order=['COLLABORATION', 'ALGORITHMS', 'OPTIMIZATION', 'CODING_SPEED', 'AI'])
-
-    language, color_language = leveler.get_best_language(data.languages)
-    total_solved, color_total_solved = leveler.get_total_solved(data.languages)
-
-    (count_solved, count_available), color_achivements = leveler.get_score_achievements(data.achievements)
-
-    (user_rank, last_rank), color_user_rank = leveler.get_score_rank(data.user)
-
-    (best_comp_rank, total_comp_player), color_competition = leveler.get_score_competition(data.rankings, online=True)
-
-    (active_color, passive_color, label) = leveler.get_main_level(data)
-
+def render(data: IProfileDto):
     f = BytesIO()
 
     s = "{title}:{ranking}"
@@ -148,63 +130,60 @@ def render(data):
         # creating a cairo context object
         context = cairo.Context(surface)
 
-        draw_borders(context, active_color)
+        draw_borders(context, data.active_color)
 
-        get_title(context, username, 20, 35, font_color=active_color)
+        get_title(context, data.username, 20, 35, font_color=data.active_color)
         
         # pie with score & note
         y_pie = 35 + (constants.SVG_height - 35) // 2
-        create_pie(context, 80, y_pie, 50, 65, active_color=active_color, passive_color=passive_color, label=label)
+        create_pie(context, 80, y_pie, 50, data.score, active_color=data.active_color, passive_color=data.passive_color, label=data.main_rank)
 
         # DRAW SEPARATORS
-        draw_line(context, c1, 55, c1, constants.SVG_height-20, active_color)
+        draw_line(context, c1, 55, c1, constants.SVG_height-20, data.active_color)
 
         # SQUARE BACKGROUND FOR STATS SVG
-        get_square(context, c1+30, get_height(1), color_user_rank)
-        get_square(context, c1+30, get_height(2), color_total_solved)
-        get_square(context, c1+30, get_height(3), color_level)
-        get_square(context, c1+30, get_height(4), color_achivements)
-        get_square(context, c1+30, get_height(5), color_language)
-        get_square(context, c1+30, get_height(6), color_competition)
+        get_square(context, c1+30, get_height(1), data.rank.color)
+        get_square(context, c1+30, get_height(2), data.puzzle_solved.color)
+        get_square(context, c1+30, get_height(3), data.level.color)
+        get_square(context, c1+30, get_height(4), data.achievements.color)
+        get_square(context, c1+30, get_height(5), data.language.color)
+        get_square(context, c1+30, get_height(6), data.competition.color)
 
         # LABEL STATS
-        set_text(context, c1+60, get_height(1), s.format(title="Global Rank",     ranking=f"{user_rank}/{last_rank}"), color_user_rank)
-        set_text(context, c1+60, get_height(2), s.format(title="Puzzle Solved",   ranking=total_solved) , color_total_solved)
-        set_text(context, c1+60, get_height(3), s.format(title="Level",           ranking=level)        , color_level)
-        set_text(context, c1+60, get_height(4), s.format(title="Success",         ranking=f"{count_solved}/{count_available}"), color_achivements)
-        set_text(context, c1+60, get_height(5), s.format(title="Best Language",   ranking=language)     , color_language)
-        set_text(context, c1+60, get_height(6), s.format(title="Highest Compet.", ranking=f"{best_comp_rank}/{total_comp_player}") , color_competition)
+        set_text(context, c1+60, get_height(1), s.format(title="Global Rank",     ranking=data.rank.value), data.rank.color)
+        set_text(context, c1+60, get_height(2), s.format(title="Puzzle Solved",   ranking=data.puzzle_solved.value) , data.puzzle_solved.color)
+        set_text(context, c1+60, get_height(3), s.format(title="Level",           ranking=data.level.value), data.level.color)
+        set_text(context, c1+60, get_height(4), s.format(title="Success",         ranking=data.achievements.value), data.achievements.color)
+        set_text(context, c1+60, get_height(5), s.format(title="Best Language",   ranking=data.language.value), data.language.color)
+        set_text(context, c1+60, get_height(6), s.format(title="Highest Compet.", ranking=data.competition.value), data.competition.color)
 
         # DRAW SEPARATORS
         draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
 
         # SQUARE BACKGROUND FOR CERTIFS SVG
-        get_square(context, c2+30, get_height(1.5), certif[0][1])
-        get_square(context, c2+30, get_height(2.5), certif[1][1])
-        get_square(context, c2+30, get_height(3.5), certif[2][1])
-        get_square(context, c2+30, get_height(4.5), certif[3][1])
-        get_square(context, c2+30, get_height(5.5), certif[4][1])
+        get_square(context, c2+30, get_height(1.5), data.certifications[0].color)
+        get_square(context, c2+30, get_height(2.5), data.certifications[1].color)
+        get_square(context, c2+30, get_height(3.5), data.certifications[2].color)
+        get_square(context, c2+30, get_height(4.5), data.certifications[3].color)
+        get_square(context, c2+30, get_height(5.5), data.certifications[4].color)
 
         # LABEL CERTIFS
-        set_text(context, c2+60, get_height(1.5), s.format(title="Collaboration", ranking=certif[0][0]), certif[0][1])
-        set_text(context, c2+60, get_height(2.5), s.format(title="Algorithmes",   ranking=certif[1][0]), certif[1][1])
-        set_text(context, c2+60, get_height(3.5), s.format(title="Optimization",  ranking=certif[2][0]), certif[2][1])
-        set_text(context, c2+60, get_height(4.5), s.format(title="Coding Speed",  ranking=certif[3][0]), certif[3][1])
-        set_text(context, c2+60, get_height(5.5), s.format(title="AI",            ranking=certif[4][0]), certif[4][1])
-
-        # getting all the svg versions available
-        versions = surface.get_versions()
+        set_text(context, c2+60, get_height(1.5), s.format(title="Collaboration", ranking=data.certifications[0].value), data.certifications[0].color)
+        set_text(context, c2+60, get_height(2.5), s.format(title="Algorithmes",   ranking=data.certifications[1].value), data.certifications[1].color)
+        set_text(context, c2+60, get_height(3.5), s.format(title="Optimization",  ranking=data.certifications[2].value), data.certifications[2].color)
+        set_text(context, c2+60, get_height(4.5), s.format(title="Coding Speed",  ranking=data.certifications[3].value), data.certifications[3].color)
+        set_text(context, c2+60, get_height(5.5), s.format(title="AI",            ranking=data.certifications[4].value), data.certifications[4].color)
 
     # the card is the component having nearly everything except external icons from CG
     card = etree.XML(f.getvalue())
 
     # load icons for stats
-    SVG_GLOBAL_RANK   = place_other_icon(constants.SVG_GLOBAL_RANK,   c1+30, get_height(1))
-    SVG_PUZZLE_SOLVED = place_other_icon(constants.SVG_PUZZLE_SOLVED, c1+30, get_height(2))
-    SVG_LEVEL         = place_other_icon(constants.SVG_LEVEL,         c1+30, get_height(3))
-    SVG_SUCCESS       = place_other_icon(constants.SVG_SUCCESS,       c1+30, get_height(4))
-    SVG_BEST_LANGUAGE = place_other_icon(constants.SVG_BEST_LANGUAGE, c1+30, get_height(5))
-    SVG_HIGHEST_COMP  = place_other_icon(constants.SVG_HIGHEST_COMP,  c1+30, get_height(6))
+    SVG_GLOBAL_RANK   = place_other_icon(constants.SVG_GLOBAL_RANK,     c1+30, get_height(1))
+    SVG_PUZZLE_SOLVED = place_other_icon(constants.SVG_PUZZLE_SOLVED,   c1+30, get_height(2))
+    SVG_LEVEL         = place_other_icon(constants.SVG_LEVEL,           c1+30, get_height(3))
+    SVG_SUCCESS       = place_other_icon(constants.SVG_SUCCESS,         c1+30, get_height(4))
+    SVG_BEST_LANGUAGE = place_other_icon(constants.SVG_BEST_LANGUAGE,   c1+30, get_height(5))
+    SVG_HIGHEST_COMP  = place_other_icon(constants.SVG_HIGHEST_COMP,    c1+30, get_height(6))
 
     # load icons from constants (extracted from CG)
     SVG_collaboration = place_icon_from_CG(constants.SVG_collaboration, c2+30, get_height(1.5))
@@ -234,9 +213,3 @@ def render(data):
     fig.set_size(("{constants.SVG_width}px", "{constants.SVG_height}px"))
     fig.append(all_elements)
     return fig.to_str()
-
-
-# https://www.geeksforgeeks.org/pycairo-drawing-different-type-of-line-caps/?ref=rp
-# https://pycairo.readthedocs.io/en/latest/reference/enums.html
-
-# "Open Sans",Lato,sans-serif
