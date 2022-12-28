@@ -1,3 +1,5 @@
+import sys
+
 import asyncio
 import unittest
 import warnings
@@ -21,7 +23,8 @@ class TestGetAllDataMethods(unittest.IsolatedAsyncioTestCase):
         # There is warnings from asyncio with ResourceWarning: Enable tracemalloc to get the object allocation traceback
         warnings.simplefilter("ignore", category=ResourceWarning)
 
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        if sys.platform.startswith("win"):
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         self.loop = asyncio.get_event_loop_policy().get_event_loop()
 
     def tearDown(self) -> None:
