@@ -37,6 +37,10 @@ def get_profile_data(data: IDataDto) -> IProfileDto:
         score = score
     )
 
+##########################
+# Fonctions to handle colors
+##########################
+
 def get_global_label(score: float) -> str:
     return "S"
 
@@ -126,6 +130,10 @@ def get_color_competition(rate: float) -> str:
     else:
         return constants.COLOR_LEGEND
 
+##########################
+# Fonctions to compute scores
+##########################
+
 def get_score_level(user: IUserDto) -> IValue:
     return IValue(
         value=user.codingamer.level, 
@@ -191,5 +199,5 @@ def get_score_competition(rankings, online=False):
 def get_main_level(data: IDataDto) -> tuple[str, str, str]:
     main_color = constants.COLOR_LEGEND
     back_color = constants.BACK_COLOR[main_color]
-    score = 99
+    score = 90
     return (main_color, back_color, score, get_global_label(score))
