@@ -25,6 +25,8 @@ class TestGetAllDataMethods(unittest.IsolatedAsyncioTestCase):
 
         if sys.platform.startswith("win"):
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+        else:
+            asyncio.set_event_loop_policy(None)
         self.loop = asyncio.get_event_loop_policy().get_event_loop()
 
     def tearDown(self) -> None:
