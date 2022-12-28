@@ -1,3 +1,5 @@
+https://github.com/Coni63/codingame-readme-stats/actions/workflows/python-app/badge.svg
+
 ```
 cd api
 venv/Scripts/activate.ps1
@@ -33,3 +35,4 @@ python -m venv venv
 venv/Scripts/activate.ps1
 pip install -r requirements.txt
 ```
+

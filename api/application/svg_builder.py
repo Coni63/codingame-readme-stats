@@ -193,6 +193,7 @@ def render(data: IProfileDto):  # pragma: no cover
         draw_line(context, c1, 55, c1, constants.SVG_height-20, data.active_color)
         draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
 
+        # add text with relevant icons -- part from global stats
         SVG_GLOBAL_RANK   = add_row(context, c1, get_height(1), data.rank)
         SVG_PUZZLE_SOLVED = add_row(context, c1, get_height(2), data.puzzle_solved)
         SVG_LEVEL         = add_row(context, c1, get_height(3), data.level)
@@ -200,7 +201,7 @@ def render(data: IProfileDto):  # pragma: no cover
         SVG_BEST_LANGUAGE = add_row(context, c1, get_height(5), data.language)
         SVG_HIGHEST_COMP  = add_row(context, c1, get_height(6), data.competition)
 
-        # load icons from constants (extracted from CG)
+        # add text with relevant icons -- part from certifications
         SVG_collaboration = add_row(context, c2, get_height(1.5), data.certifications[0])
         SVG_algorithmes   = add_row(context, c2, get_height(2.5), data.certifications[1])
         SVG_optimization  = add_row(context, c2, get_height(3.5), data.certifications[2])
