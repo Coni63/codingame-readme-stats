@@ -10,7 +10,11 @@ CORS(app)
 
 @app.route("/api/details/<codingamer>", methods=['GET'])
 def get_card_for(codingamer):
-    user_datas = asyncio.run(user_data.get_all_data(codingamer))
+    try:
+        user_datas = asyncio.run(user_data.get_all_data(codingamer))
+    except ValueError as e:
+        return {"message" : str(e)}, 404
+
     profile_data = leveler.get_profile_data(user_datas)
     svg = svg_builder.render(profile_data)
 

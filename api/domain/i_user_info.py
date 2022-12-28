@@ -40,7 +40,6 @@ class ICodingameDto:
     avatar: int
     category: str
     city: str
-    company: str
     countryId: str
     cover: int
     enable: bool
@@ -49,10 +48,11 @@ class ICodingameDto:
     pseudo: str
     publicHandle: str
     rank: int 
-    schoolId: int 
     tagline: str
     userId: int 
     xp: int 
+    company: str = ""
+    schoolId: int = 0
 
 
 @dataclass_json

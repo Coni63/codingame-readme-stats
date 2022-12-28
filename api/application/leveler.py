@@ -189,7 +189,6 @@ def get_score_competition(rankings, online=False):
         top = max(rankings.challenges, key=lambda x: x.points)
 
         points = get_points_from_rank(top.ranking, top.total)
-        print(points)
         return IValue(value=f"{top.ranking}/{top.total}", color=get_color_competition(points))
     else:
         f = [x for x in rankings.puzzles if x.puzzleType == "BOT_PROGRAMMING"]
