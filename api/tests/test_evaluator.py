@@ -1,6 +1,7 @@
 import unittest
 
-from application.evaluator import *
+# from application.evaluator import *
+
 
 class TestLevelerMethods(unittest.TestCase):
 

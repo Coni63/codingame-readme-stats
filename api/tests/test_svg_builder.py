@@ -1,6 +1,7 @@
 import unittest
 
-from application.svg_builder import *
+from application.svg_builder import get_scale, hex_to_rgb
+
 
 class TestRendererMethods(unittest.TestCase):
 
@@ -14,7 +15,7 @@ class TestRendererMethods(unittest.TestCase):
         self.assertAlmostEqual(get_scale(20, 20), 1.0)
         self.assertAlmostEqual(get_scale(40, 20), .5)
         self.assertAlmostEqual(get_scale(2, 20), 10.0)
-    
+
     def test_invalid_get_scale(self):
         with self.assertRaises(ValueError):
             get_scale("20%")
@@ -28,7 +29,7 @@ class TestRendererMethods(unittest.TestCase):
 
     def test_invalid_hex_to_rgb(self):
         with self.assertRaises(ValueError):
-            hex_to_rgb("#F0F") # invalid -- shorten format
+            hex_to_rgb("#F0F")  # invalid -- shorten format
 
         with self.assertRaises(ValueError):
             hex_to_rgb("FF00FF")  # invalid format -- missing #

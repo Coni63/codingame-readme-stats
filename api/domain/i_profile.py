@@ -5,6 +5,9 @@ from dataclasses import dataclass
 class IValue:
     value: str
     color: str
+    title: str
+    icon: str | None = None
+    from_CG: bool | None = None
 
 
 @dataclass
@@ -16,9 +19,8 @@ class IProfileDto:
     score: int
     level: IValue
     certifications: list[IValue]
-    language : IValue
-    puzzle_solved : IValue
-    achievements : IValue
-    rank : IValue
-    competition : IValue
-
+    language: IValue
+    puzzle_solved: IValue
+    achievements: IValue
+    rank: IValue
+    competition: IValue

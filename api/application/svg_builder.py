@@ -8,19 +8,21 @@ import base64
 import svgutils
 from lxml import etree
 
-from domain.i_profile import IProfileDto
+from domain.i_profile import IProfileDto, IValue
 
 ##########################
 # helpers
 ##########################
 
-def get_scale(element_height: int | str, target_height: int=20) -> float:
+
+def get_scale(element_height: int | str, target_height: int = 20) -> float:
     if not isinstance(element_height, str) and not isinstance(element_height, int):
         raise ValueError("invalid element_height")
 
     if isinstance(element_height, str):
         element_height = int(element_height.replace("px", ""))
     return target_height / element_height
+
 
 def hex_to_rgb(value: str):
     if not re.match(r'^#[0-9A-Fa-f]{6}$', value):
@@ -30,14 +32,17 @@ def hex_to_rgb(value: str):
     r = value[:2]
     g = value[2:4]
     b = value[4:]
-    return (int(r, 16)/255.0, int(g, 16)/255.0, int(b, 16)/255.0)
+    return (int(r, 16) / 255.0, int(g, 16) / 255.0, int(b, 16) / 255.0)
 
-def get_height(n: int=1, padding: int=26, top_offset: int=45): # pragma: no cover
-    return (n-1) * padding + top_offset
+
+def get_height(n: int = 1, padding: int = 26, top_offset: int = 45):  # pragma: no cover
+    return (n - 1) * padding + top_offset
+
 
 ##########################
 # Creation of geometries
 ##########################
+
 
 def roundrect(context: cairo.Context, 
               x: int, y: int, width: int, height: int, r: int):
@@ -47,14 +52,19 @@ def roundrect(context: cairo.Context,
     context.arc(x+r, y+height-r, r, math.pi/2, math.pi)
     context.close_path()
 
+
 def get_square(context: cairo.Context, x: int, y: int, bg_color: str):
     s = 24  # images are 20px x 20px and square is 24px x 24px
     context.set_source_rgb(*hex_to_rgb(bg_color))
     roundrect(context, x-2, y-2, s, s, 4)
     context.fill()
 
-def set_text(context: cairo.Context, x: int, y: int, text: str, bg_color: str, font_size: int=12): # pragma: no cover
-    offset_text = 0.5 * font_size + 10  # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
+
+def set_text(context: cairo.Context, 
+             x: int, y: int, text: str, 
+             bg_color: str, font_size: int=12):  # pragma: no cover
+    # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
+    offset_text = 0.5 * font_size + 10  
     context.set_source_rgb(*hex_to_rgb(bg_color))
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
     context.set_font_size(font_size)
@@ -62,28 +72,36 @@ def set_text(context: cairo.Context, x: int, y: int, text: str, bg_color: str, f
     context.show_text(text)
     context.stroke()
 
-def draw_line(context: cairo.Context, x1: int, y1: int, x2: int, y2: int, color: str, line_width: int=5): # pragma: no cover
+
+def draw_line(context: cairo.Context,
+              x1: int, y1: int, x2: int, y2: int,
+              color: str, line_width: int=5):  # pragma: no cover
     context.set_source_rgb(*hex_to_rgb(color))
     context.set_line_width(line_width)
     context.move_to(x1, y1)
     context.line_to(x2, y2) 
     context.stroke()
 
-def draw_borders(context: cairo.Context, color: str, line_width: int=5): # pragma: no cover
+
+def draw_borders(context: cairo.Context, color: str, line_width: int=5):  # pragma: no cover
     context.set_source_rgb(*hex_to_rgb(color))
     context.set_line_width(line_width)
     roundrect(context, 0, 0, constants.SVG_width, constants.SVG_height, constants.SVG_border_radius)
     context.stroke()
 
+
 ##########################
 # Work on svg files
 ##########################
+
 
 def decode_svg(svg_encoded: str) -> str:  # pragma: no cover
     encoded = svg_encoded.replace("data:image/svg+xml;base64,", "")
     return base64.b64decode(encoded).decode("utf-8") 
 
-def place_icon(svg_encoded: str, x: int, y: int, line_color: str="#000000", from_CG: bool=True) -> svgutils.transform.SVGFigure:  # pragma: no cover
+
+def place_icon(svg_encoded: str, x: int, y: int,
+               line_color: str="#000000", from_CG: bool=True) -> svgutils.transform.SVGFigure:  # pragma: no cover
     figure = svgutils.transform.fromstring(decode_svg(svg_encoded))
     svg_element = figure.getroot()
     svg_element.moveto(x, y, get_scale(figure.height))
@@ -93,11 +111,14 @@ def place_icon(svg_encoded: str, x: int, y: int, line_color: str="#000000", from
         svg_element.root.getchildren()[0].set("fill", line_color)
     return svg_element
 
+
 ##########################
 # Fonctions to generate the svg figure
 ##########################
 
-def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str, font_size_big: int=35, font_size_small: int=25):  # pragma: no cover
+
+def get_title(context: cairo.Context, text: str, x: int, y: int,
+              font_color: str, font_size_big: int=35, font_size_small: int=25):  # pragma: no cover
     color = hex_to_rgb(font_color)
     context.set_source_rgb(*color)
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
@@ -113,7 +134,9 @@ def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str
 
     context.stroke()
 
-def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int, active_color: str, passive_color: str, label: str, font_size_big: int=35): # pragma: no cover
+
+def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
+               active_color: str, passive_color: str, label: str, font_size_big: int=35):  # pragma: no cover
     start_angle = 3*math.pi/2
     end_angle = 3*math.pi/2 + 2*math.pi*score/100
 
@@ -130,7 +153,6 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int, 
     context.stroke()
 
     context.set_source_rgb(*hex_to_rgb(active_color))
-        
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
     context.set_font_size(font_size_big)
 
@@ -140,10 +162,17 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int, 
     context.show_text(label)
     context.stroke()
 
-def render(data: IProfileDto): # pragma: no cover
+
+def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):
+    get_square(context, x_start+30, y, data.color)
+    set_text(context, x_start+60, y, f"{data.title}:{data.value}", data.color)
+    return place_icon(data.icon, x_start+30, y, from_CG=data.from_CG)
+
+
+def render(data: IProfileDto):  # pragma: no cover
+
     f = BytesIO()
 
-    s = "{title}:{ranking}"
     c1 = 160  # x position of the first section
     c2 = 410  # x position of the second section
 
@@ -154,68 +183,32 @@ def render(data: IProfileDto): # pragma: no cover
         draw_borders(context, data.active_color)
 
         get_title(context, data.username, 20, 35, font_color=data.active_color)
-        
+
         # pie with score & note
         y_pie = 35 + (constants.SVG_height - 35) // 2
-        create_pie(context, 80, y_pie, 50, data.score, active_color=data.active_color, passive_color=data.passive_color, label=data.main_rank)
+        create_pie(context, 80, y_pie, 50, data.score, active_color=data.active_color,
+                   passive_color=data.passive_color, label=data.main_rank)
 
         # DRAW SEPARATORS
         draw_line(context, c1, 55, c1, constants.SVG_height-20, data.active_color)
-
-        # SQUARE BACKGROUND FOR STATS SVG
-        get_square(context, c1+30, get_height(1), data.rank.color)
-        get_square(context, c1+30, get_height(2), data.puzzle_solved.color)
-        get_square(context, c1+30, get_height(3), data.level.color)
-        get_square(context, c1+30, get_height(4), data.achievements.color)
-        get_square(context, c1+30, get_height(5), data.language.color)
-        get_square(context, c1+30, get_height(6), data.competition.color)
-
-        # LABEL STATS
-        set_text(context, c1+60, get_height(1), s.format(title="Global Rank",     ranking=data.rank.value), data.rank.color)
-        set_text(context, c1+60, get_height(2), s.format(title="Puzzle Solved",   ranking=data.puzzle_solved.value) , data.puzzle_solved.color)
-        set_text(context, c1+60, get_height(3), s.format(title="Level",           ranking=data.level.value), data.level.color)
-        set_text(context, c1+60, get_height(4), s.format(title="Success",         ranking=data.achievements.value), data.achievements.color)
-        set_text(context, c1+60, get_height(5), s.format(title="Best Language",   ranking=data.language.value), data.language.color)
-        set_text(context, c1+60, get_height(6), s.format(title="Highest Compet.", ranking=data.competition.value), data.competition.color)
-
-        # DRAW SEPARATORS
         draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
 
-        # SQUARE BACKGROUND FOR CERTIFS SVG
-        get_square(context, c2+30, get_height(1.5), data.certifications[0].color)
-        get_square(context, c2+30, get_height(2.5), data.certifications[1].color)
-        get_square(context, c2+30, get_height(3.5), data.certifications[2].color)
-        get_square(context, c2+30, get_height(4.5), data.certifications[3].color)
-        get_square(context, c2+30, get_height(5.5), data.certifications[4].color)
+        SVG_GLOBAL_RANK   = add_row(context, c1, get_height(1), data.rank)
+        SVG_PUZZLE_SOLVED = add_row(context, c1, get_height(2), data.puzzle_solved)
+        SVG_LEVEL         = add_row(context, c1, get_height(3), data.level)
+        SVG_SUCCESS       = add_row(context, c1, get_height(4), data.achievements)
+        SVG_BEST_LANGUAGE = add_row(context, c1, get_height(5), data.language)
+        SVG_HIGHEST_COMP  = add_row(context, c1, get_height(6), data.competition)
 
-        # LABEL CERTIFS
-        set_text(context, c2+60, get_height(1.5), s.format(title="Collaboration", ranking=data.certifications[0].value), data.certifications[0].color)
-        set_text(context, c2+60, get_height(2.5), s.format(title="Algorithmes",   ranking=data.certifications[1].value), data.certifications[1].color)
-        set_text(context, c2+60, get_height(3.5), s.format(title="Optimization",  ranking=data.certifications[2].value), data.certifications[2].color)
-        set_text(context, c2+60, get_height(4.5), s.format(title="Coding Speed",  ranking=data.certifications[3].value), data.certifications[3].color)
-        set_text(context, c2+60, get_height(5.5), s.format(title="AI",            ranking=data.certifications[4].value), data.certifications[4].color)
-
-    # the card is the component having nearly everything except external icons from CG
-    card = etree.XML(f.getvalue())
-
-    # load icons for stats
-    SVG_GLOBAL_RANK   = place_icon(constants.SVG_GLOBAL_RANK,     c1+30, get_height(1), from_CG=False)
-    SVG_PUZZLE_SOLVED = place_icon(constants.SVG_PUZZLE_SOLVED,   c1+30, get_height(2), from_CG=False)
-    SVG_LEVEL         = place_icon(constants.SVG_LEVEL,           c1+30, get_height(3), from_CG=False)
-    SVG_SUCCESS       = place_icon(constants.SVG_SUCCESS,         c1+30, get_height(4), from_CG=False)
-    SVG_BEST_LANGUAGE = place_icon(constants.SVG_BEST_LANGUAGE,   c1+30, get_height(5), from_CG=False)
-    SVG_HIGHEST_COMP  = place_icon(constants.SVG_HIGHEST_COMP,    c1+30, get_height(6), from_CG=False)
-
-    # load icons from constants (extracted from CG)
-    SVG_collaboration = place_icon(constants.SVG_collaboration, c2+30, get_height(1.5), from_CG=True)
-    SVG_algorithmes   = place_icon(constants.SVG_algorithmes,   c2+30, get_height(2.5), from_CG=True)
-    SVG_optimization  = place_icon(constants.SVG_optimization,  c2+30, get_height(3.5), from_CG=True)
-    SVG_speed         = place_icon(constants.SVG_speed,         c2+30, get_height(4.5), from_CG=True)
-    SVG_AI            = place_icon(constants.SVG_AI,            c2+30, get_height(5.5), from_CG=True)
-
+        # load icons from constants (extracted from CG)
+        SVG_collaboration = add_row(context, c2, get_height(1.5), data.certifications[0])
+        SVG_algorithmes   = add_row(context, c2, get_height(2.5), data.certifications[1])
+        SVG_optimization  = add_row(context, c2, get_height(3.5), data.certifications[2])
+        SVG_speed         = add_row(context, c2, get_height(4.5), data.certifications[3])
+        SVG_AI            = add_row(context, c2, get_height(5.5), data.certifications[4])
 
     all_elements = [
-        card, 
+        etree.XML(f.getvalue()),  # main card that we merge with external icons
         SVG_collaboration, 
         SVG_algorithmes, 
         SVG_optimization, 

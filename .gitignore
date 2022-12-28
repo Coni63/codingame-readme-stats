@@ -3,3 +3,4 @@
 **/analysis/**
 **/coverage.xml
 **/.coverage
+**/.vscode/**

@@ -7,6 +7,7 @@ from domain.i_data import IDataDto
 from application.user_data import get_all_data
 from config import fake_data
 
+
 class TestGetAllDataMethods(unittest.IsolatedAsyncioTestCase):
     """
     This is more an integration test
@@ -71,6 +72,7 @@ class TestGetAllDataMethods(unittest.IsolatedAsyncioTestCase):
 
     #     with self.assertRaises(ValueError):
     #         await get_all_data(codingamer)
+
 
 if __name__ == '__main__':
     unittest.main()

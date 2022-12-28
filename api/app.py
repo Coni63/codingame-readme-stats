@@ -1,6 +1,6 @@
 import asyncio
 
-from flask import Flask, request
+from flask import Flask
 from flask_cors import CORS
 
 from application import user_data, svg_builder, evaluator
@@ -8,12 +8,13 @@ from application import user_data, svg_builder, evaluator
 app = Flask(__name__)
 CORS(app)
 
+
 @app.route("/api/details/<codingamer>", methods=['GET'])
 def get_card_for(codingamer):
     try:
         user_datas = asyncio.run(user_data.get_all_data(codingamer))
     except ValueError as e:
-        return {"message" : str(e)}, 404
+        return {"message": str(e)}, 404
 
     profile_data = evaluator.evaluate(user_datas)
     svg = svg_builder.render(profile_data)

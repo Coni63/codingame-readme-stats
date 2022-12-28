@@ -1,15 +1,15 @@
 from config import constants
-import math
 
 from domain.i_data import IDataDto
 from domain.i_profile import IProfileDto, IValue
 from domain.i_language import ILanguageDto
 from domain.i_achievement import IAchievementDto
 from domain.i_certification import ICertificationDto
-from domain.i_ranking import IRankingDto
+# from domain.i_ranking import IRankingDto
 from domain.i_user_info import IUserDto
 
 from infrastructure.codingame_api import get_points_from_rank
+
 
 def evaluate(data: IDataDto) -> IProfileDto:
     (active_color, passive_color, score, label) = get_main_level(data)
@@ -24,25 +24,27 @@ def evaluate(data: IDataDto) -> IProfileDto:
 
     return IProfileDto(
         username=data.user.codingamer.pseudo,
-        active_color = active_color,
-        passive_color = passive_color,
-        main_rank = label,
-        level = level_value,
+        active_color=active_color,
+        passive_color=passive_color,
+        main_rank=label,
+        level=level_value,
         certifications=certif_value,
-        language = top_language_value,
-        puzzle_solved = puzzle_solved_value,
-        achievements = achievements_value,
-        rank = rank_value,
-        competition = comp_value,
-        score = score
+        language=top_language_value,
+        puzzle_solved=puzzle_solved_value,
+        achievements=achievements_value,
+        rank=rank_value,
+        competition=comp_value,
+        score=score
     )
 
 ##########################
 # Fonctions to handle colors
 ##########################
 
+
 def get_global_label(score: float) -> str:
     return "S"
+
 
 def get_color_level(level: int) -> str:
     if level <= 8:
@@ -55,6 +57,7 @@ def get_color_level(level: int) -> str:
         return constants.COLOR_GOLD
     else:
         return constants.COLOR_LEGEND
+
 
 def get_color_from_string(string: str) -> str:
     if string == "WOOD":
@@ -70,6 +73,7 @@ def get_color_from_string(string: str) -> str:
     else:
         return constants.COLOR_WOOD
 
+
 def get_color_language(puzzle_solved: int) -> str:
     if puzzle_solved <= 10:
         return constants.COLOR_WOOD
@@ -81,6 +85,7 @@ def get_color_language(puzzle_solved: int) -> str:
         return constants.COLOR_GOLD
     else:
         return constants.COLOR_LEGEND
+
 
 def get_color_total_solved(puzzle_solved: int) -> str:
     if puzzle_solved <= 25:
@@ -94,6 +99,7 @@ def get_color_total_solved(puzzle_solved: int) -> str:
     else:
         return constants.COLOR_LEGEND
 
+
 def get_color_achievements(rate: float) -> str:
     if rate <= 0.25:
         return constants.COLOR_WOOD
@@ -105,6 +111,7 @@ def get_color_achievements(rate: float) -> str:
         return constants.COLOR_GOLD
     else:
         return constants.COLOR_LEGEND
+
 
 def get_color_rank(rate: float) -> str:
     if rate <= 0.0025:
@@ -118,6 +125,7 @@ def get_color_rank(rate: float) -> str:
     else:
         return constants.COLOR_WOOD
 
+
 def get_color_competition(rate: float) -> str:
     if rate <= 100:
         return constants.COLOR_WOOD
@@ -130,40 +138,87 @@ def get_color_competition(rate: float) -> str:
     else:
         return constants.COLOR_LEGEND
 
+
 ##########################
 # Fonctions to compute scores
 ##########################
 
+
 def get_score_level(user: IUserDto) -> IValue:
     return IValue(
-        value=user.codingamer.level, 
-        color=get_color_level(user.codingamer.level)
+        value=user.codingamer.level,
+        color=get_color_level(user.codingamer.level),
+        title="Level",
+        icon=constants.SVG_LEVEL,
+        from_CG=False
     )
 
-def get_score_certificate(certifications: list[ICertificationDto]) -> list[IValue]:
-    order=['COLLABORATION', 'ALGORITHMS', 'OPTIMIZATION', 'CODING_SPEED', 'AI']
 
-    ans = [IValue(value="WOOD", color=constants.COLOR_WOOD) for _ in range(len(order))]
+def get_score_certificate(certifications: list[ICertificationDto]) -> list[IValue]:
+    order = ['COLLABORATION', 'ALGORITHMS', 'OPTIMIZATION', 'CODING_SPEED', 'AI']
+    titles = {
+        'COLLABORATION': 'Collaboration',
+        'ALGORITHMS': 'Algorithms',
+        'OPTIMIZATION': 'Optimization',
+        'CODING_SPEED': 'Coding Speed',
+        'AI': 'AI'
+    }
+    icons = {
+        'COLLABORATION': constants.SVG_collaboration,
+        'ALGORITHMS': constants.SVG_algorithmes,
+        'OPTIMIZATION': constants.SVG_optimization,
+        'CODING_SPEED': constants.SVG_speed,
+        'AI': constants.SVG_AI,
+    }
+
+    ans = [IValue(
+        value="WOOD", 
+        color=constants.COLOR_WOOD, 
+        title=titles[cat],
+        icon=icons[cat],
+        from_CG=True
+    ) for cat in order]
+
     for certification in certifications:
         idx = order.index(certification.category)
         level = certification.level
-        ans[idx] = IValue(value=level, color=get_color_from_string(level))
+        ans[idx] = IValue(
+            value=level, 
+            color=get_color_from_string(level),
+            title=titles[certification.category],
+            icon=icons[certification.category],
+            from_CG=True
+        )
     return ans
 
+
 def get_score_best_language(languages: list[ILanguageDto]) -> IValue:
-    top = max(languages, key=lambda x:x.puzzleCount)
-    return IValue(value=top.languageName, color=get_color_language(top.puzzleCount))
+    top = max(languages, key=lambda x: x.puzzleCount)
+    return IValue(
+        value=top.languageName, 
+        color=get_color_language(top.puzzleCount),
+        title="Best Language",
+        icon=constants.SVG_BEST_LANGUAGE,
+        from_CG=False
+    )
 
 
 def get_score_total_solved(languages: list[ILanguageDto]) -> IValue:
     total = sum(x.puzzleCount for x in languages)
-    return IValue(value=total, color=get_color_total_solved(total))
+    return IValue(
+        value=total, 
+        color=get_color_total_solved(total),
+        title="Puzzles Solved",
+        icon=constants.SVG_PUZZLE_SOLVED,
+        from_CG=False
+    )
+
 
 def get_score_achievements(achievements: list[IAchievementDto]) -> IValue:
     skip = ["coder", "social"]
     total_solved = 0
     total_available = 0
-    count_solved  = 0
+    count_solved = 0
     count_available = 0
     for achievement in achievements:
         if achievement.categoryId in skip:
@@ -175,25 +230,52 @@ def get_score_achievements(achievements: list[IAchievementDto]) -> IValue:
 
         total_available += achievement.weight
         count_available += 1
-    
-    return IValue(value=f"{count_solved}/{count_available}", color=get_color_achievements(total_solved / total_available))
+
+    return IValue(
+        value=f"{count_solved}/{count_available}",
+        color=get_color_achievements(total_solved / total_available),
+        title="Success",
+        icon=constants.SVG_SUCCESS,
+        from_CG=False
+    )
+
 
 def get_score_rank(user: IUserDto) -> IValue:
     rank = user.codingamer.rank
     last_rank = user.codingamePointsRankingDto.numberCodingamersGlobal
 
-    return IValue(value=f"{rank}/{last_rank}", color=get_color_rank(rank / last_rank))
+    return IValue(
+        value=f"{rank}/{last_rank}", 
+        color=get_color_rank(rank / last_rank),
+        title="Global Rank",
+        icon=constants.SVG_GLOBAL_RANK,
+        from_CG=False
+    )
+
 
 def get_score_competition(rankings, online=False):
     if online:
         top = max(rankings.challenges, key=lambda x: x.points)
 
         points = get_points_from_rank(top.ranking, top.total)
-        return IValue(value=f"{top.ranking}/{top.total}", color=get_color_competition(points))
+        return IValue(
+            value=f"{top.ranking}/{top.total}", 
+            color=get_color_competition(points),
+            title="Highest Compet.",
+            icon=constants.SVG_HIGHEST_COMP,
+            from_CG=False
+        )
     else:
         f = [x for x in rankings.puzzles if x.puzzleType == "BOT_PROGRAMMING"]
         top = max(f, key=lambda x: x.points)
-        return IValue(value=f"{top.ranking}/{top.totalPlayers}", color=get_color_competition(top.points))
+        return IValue(
+            value=f"{top.ranking}/{top.totalPlayers}", 
+            color=get_color_competition(top.points),
+            title="Highest Compet.",
+            icon=constants.SVG_HIGHEST_COMP,
+            from_CG=False
+        )
+
 
 def get_main_level(data: IDataDto) -> tuple[str, str, str]:
     main_color = constants.COLOR_LEGEND

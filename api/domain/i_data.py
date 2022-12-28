@@ -7,11 +7,12 @@ from domain.i_certification import ICertificationDto
 from domain.i_achievement import IAchievementDto
 from domain.i_ranking import IRankingDto
 
+
 @dataclass_json
 @dataclass
 class IDataDto:
     user: IUserDto
-    languages : list[ILanguageDto]
-    certifications : list[ICertificationDto]
-    achievements : list[IAchievementDto]
-    rankings : IRankingDto
+    languages: list[ILanguageDto]
+    certifications: list[ICertificationDto]
+    achievements: list[IAchievementDto]
+    rankings: IRankingDto
