@@ -47,5 +47,16 @@ async def get_ranking_for(userid: int, session: aiohttp.ClientSession) -> dict:
     return fake_data.FAKE_RANKING
 
 
-def get_points_from_rank(position: int, total: int) -> float:
-    return math.pow((5000 * min(total/500, 1)), ((total - position + 1) / total))
+def get_points_from_rank(position: int, total: int, base: int = 5000) -> float:
+    if position < 0: 
+        raise ValueError("position must be a positive integer")
+
+    if total < position: 
+        raise ValueError("position must be lower than or equal to the total number of participants")
+
+    if base <= 0: 
+        raise ValueError("base must be a positive integer")
+
+    b = int(base * min(total/500, 1))
+    p = (total - position + 1) / total
+    return round(math.pow(b, p))

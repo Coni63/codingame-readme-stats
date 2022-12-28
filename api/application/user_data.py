@@ -46,10 +46,10 @@ async def get_all_data(codingamer: str) -> IDataDto:
         ans = await asyncio.gather(*tasks)
         languages, certifications, achievements, rankings = ans
 
-    return IDataDto.from_dict({
-        "user": user,
-        "languages": languages,
-        "certifications": certifications,
-        "achievements": achievements,
-        "rankings": rankings,
-    })
+    return IDataDto(
+        user=user,
+        languages=languages,
+        certifications = certifications,
+        achievements=achievements,
+        rankings=rankings,
+    )
