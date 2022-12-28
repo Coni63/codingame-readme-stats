@@ -1,5 +1,5 @@
 import math
-
+import re
 import cairo
 from io import BytesIO
 
@@ -14,17 +14,25 @@ from domain.i_profile import IProfileDto
 # helpers
 ##########################
 
-def get_scale(element, target_height=20):
-    return target_height / int(element.height.replace("px", ""))
+def get_scale(element_height: int | str, target_height: int=20) -> float:
+    if not isinstance(element_height, str) and not isinstance(element_height, int):
+        raise ValueError("invalid element_height")
 
-def hex_to_rgb(value):
+    if isinstance(element_height, str):
+        element_height = int(element_height.replace("px", ""))
+    return target_height / element_height
+
+def hex_to_rgb(value: str):
+    if not re.match(r'^#[0-9A-Fa-f]{6}$', value):
+        raise ValueError("Invalid error, format must be #FF0000")
+
     value = value.lstrip('#')
     r = value[:2]
     g = value[2:4]
     b = value[4:]
     return (int(r, 16)/255.0, int(g, 16)/255.0, int(b, 16)/255.0)
 
-def get_height(n: int=1, padding: int=26, top_offset: int=45):
+def get_height(n: int=1, padding: int=26, top_offset: int=45): # pragma: no cover
     return (n-1) * padding + top_offset
 
 ##########################
@@ -45,8 +53,8 @@ def get_square(context: cairo.Context, x: int, y: int, bg_color: str):
     roundrect(context, x-2, y-2, s, s, 4)
     context.fill()
 
-def set_text(context: cairo.Context, x: int, y: int, text: str, bg_color: str, font_size: int=12):
-    offset_text = 0.5 * font_size + 10  # l'image fait 20px et le text fait font_size. Il faut donc shifter de font_size + (20 - font_size) / 2
+def set_text(context: cairo.Context, x: int, y: int, text: str, bg_color: str, font_size: int=12): # pragma: no cover
+    offset_text = 0.5 * font_size + 10  # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
     context.set_source_rgb(*hex_to_rgb(bg_color))
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
     context.set_font_size(font_size)
@@ -54,14 +62,14 @@ def set_text(context: cairo.Context, x: int, y: int, text: str, bg_color: str, f
     context.show_text(text)
     context.stroke()
 
-def draw_line(context: cairo.Context, x1: int, y1: int, x2: int, y2: int, color: str, line_width: int=5):
+def draw_line(context: cairo.Context, x1: int, y1: int, x2: int, y2: int, color: str, line_width: int=5): # pragma: no cover
     context.set_source_rgb(*hex_to_rgb(color))
     context.set_line_width(line_width)
     context.move_to(x1, y1)
     context.line_to(x2, y2) 
     context.stroke()
 
-def draw_borders(context: cairo.Context, color: str, line_width: int=5):
+def draw_borders(context: cairo.Context, color: str, line_width: int=5): # pragma: no cover
     context.set_source_rgb(*hex_to_rgb(color))
     context.set_line_width(line_width)
     roundrect(context, 0, 0, constants.SVG_width, constants.SVG_height, constants.SVG_border_radius)
@@ -71,14 +79,14 @@ def draw_borders(context: cairo.Context, color: str, line_width: int=5):
 # Work on svg files
 ##########################
 
-def decode_svg(svg_encoded: str) -> str:
+def decode_svg(svg_encoded: str) -> str:  # pragma: no cover
     encoded = svg_encoded.replace("data:image/svg+xml;base64,", "")
     return base64.b64decode(encoded).decode("utf-8") 
 
-def place_icon(svg_encoded: str, x: int, y: int, line_color: str="#000000", from_CG: bool=True) -> svgutils.transform.SVGFigure:
+def place_icon(svg_encoded: str, x: int, y: int, line_color: str="#000000", from_CG: bool=True) -> svgutils.transform.SVGFigure:  # pragma: no cover
     figure = svgutils.transform.fromstring(decode_svg(svg_encoded))
     svg_element = figure.getroot()
-    svg_element.moveto(x, y, get_scale(figure))
+    svg_element.moveto(x, y, get_scale(figure.height))
     if from_CG:
         svg_element.root.getchildren()[0].getchildren()[0].set("fill", line_color)
     else:
@@ -89,7 +97,7 @@ def place_icon(svg_encoded: str, x: int, y: int, line_color: str="#000000", from
 # Fonctions to generate the svg figure
 ##########################
 
-def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str, font_size_big: int=35, font_size_small: int=25):
+def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str, font_size_big: int=35, font_size_small: int=25):  # pragma: no cover
     color = hex_to_rgb(font_color)
     context.set_source_rgb(*color)
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
@@ -105,7 +113,7 @@ def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str
 
     context.stroke()
 
-def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int, active_color: str, passive_color: str, label: str, font_size_big: int=35):
+def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int, active_color: str, passive_color: str, label: str, font_size_big: int=35): # pragma: no cover
     start_angle = 3*math.pi/2
     end_angle = 3*math.pi/2 + 2*math.pi*score/100
 
@@ -132,7 +140,7 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int, 
     context.show_text(label)
     context.stroke()
 
-def render(data: IProfileDto):
+def render(data: IProfileDto): # pragma: no cover
     f = BytesIO()
 
     s = "{title}:{ranking}"

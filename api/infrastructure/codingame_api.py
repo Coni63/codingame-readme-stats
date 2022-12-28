@@ -17,7 +17,7 @@ async def _fetch(url: str, data: dict, session: aiohttp.ClientSession) -> dict:
 
 async def get_info_for(codingamer: str, session: aiohttp.ClientSession) -> dict:
     if codingamer == "magic":
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
         return fake_data.FAKE_USER
 
     json = [codingamer]
@@ -26,7 +26,7 @@ async def get_info_for(codingamer: str, session: aiohttp.ClientSession) -> dict:
 
 async def get_certifications_for(userid: int, session: aiohttp.ClientSession) -> dict:
     if userid == 0:
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
         return fake_data.FAKE_CERTIF
 
     json = [userid]
@@ -34,7 +34,7 @@ async def get_certifications_for(userid: int, session: aiohttp.ClientSession) ->
 
 async def get_languages_used_by(userid: int, session: aiohttp.ClientSession) -> dict:
     if userid == 0:
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
         return fake_data.FAKE_LANGUAGES
     
     json = [userid]
@@ -43,7 +43,7 @@ async def get_languages_used_by(userid: int, session: aiohttp.ClientSession) -> 
 
 async def get_achievements_for(userid: int, session: aiohttp.ClientSession) -> dict:
     if userid == 0:
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
         return fake_data.FAKE_ACHIVEMENTS
     
     json = [userid]
@@ -51,7 +51,7 @@ async def get_achievements_for(userid: int, session: aiohttp.ClientSession) -> d
 
 async def get_ranking_for(userid: int, session: aiohttp.ClientSession) -> dict:
     if userid == 0:
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.01)
         return fake_data.FAKE_RANKING
 
     json = [userid]

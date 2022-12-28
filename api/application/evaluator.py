@@ -11,7 +11,7 @@ from domain.i_user_info import IUserDto
 
 from infrastructure.codingame_api import get_points_from_rank
 
-def get_profile_data(data: IDataDto) -> IProfileDto:
+def evaluate(data: IDataDto) -> IProfileDto:
     (active_color, passive_color, score, label) = get_main_level(data)
 
     level_value = get_score_level(data.user)

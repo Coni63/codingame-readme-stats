@@ -3,7 +3,7 @@ import asyncio
 from flask import Flask, request
 from flask_cors import CORS
 
-from application import user_data, svg_builder, leveler
+from application import user_data, svg_builder, evaluator
 
 app = Flask(__name__)
 CORS(app)
@@ -15,7 +15,7 @@ def get_card_for(codingamer):
     except ValueError as e:
         return {"message" : str(e)}, 404
 
-    profile_data = leveler.get_profile_data(user_datas)
+    profile_data = evaluator.evaluate(user_datas)
     svg = svg_builder.render(profile_data)
 
     if svg is not None:
