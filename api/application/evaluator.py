@@ -244,6 +244,15 @@ def get_score_competition(rankings, online=False):
     thresholds = [166, 1285, 2911, 4037]
 
     if online:
+        if len(rankings.challenges) == 0:
+            return IValue(
+                value="N/A", 
+                color=constants.COLOR_WOOD,
+                title="Highest Compet.",
+                icon=constants.SVG_HIGHEST_COMP,
+                from_CG=False
+            )
+
         top = max(rankings.challenges, key=lambda x: get_points_from_rank(x.ranking, x.total))
 
         points = get_points_from_rank(top.ranking, top.total)
@@ -256,6 +265,16 @@ def get_score_competition(rankings, online=False):
         )
     else:
         f = [x for x in rankings.puzzles if x.puzzleType == "BOT_PROGRAMMING"]
+
+        if len(f) == 0:
+            return IValue(
+                value="N/A", 
+                color=constants.COLOR_WOOD,
+                title="Highest Compet.",
+                icon=constants.SVG_HIGHEST_COMP,
+                from_CG=False
+            )
+
         top = max(f, key=lambda x: x.points)
         return IValue(
             value=f"{top.ranking}/{top.totalPlayers}", 
