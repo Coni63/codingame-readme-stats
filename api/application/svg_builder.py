@@ -169,7 +169,7 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # prag
     return place_icon(data.icon, x_start+30, y, from_CG=data.from_CG)
 
 
-def render(data: IProfileDto):  # pragma: no cover
+def render(data: IProfileDto) -> str:  # pragma: no cover
 
     f = BytesIO()
 

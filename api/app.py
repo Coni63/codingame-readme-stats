@@ -25,7 +25,20 @@ def get_card_for(codingamer):
     if svg is not None:
         return svg, 200
     else:
-        return {}, 404
+        return {"message": "error when generating the image"}, 500
+
+
+@app.after_request
+def add_header(response):
+    if response.status_code == 200:
+        response.cache_control.max_age = 86400
+        response.cache_control.public = True
+        response.cache_control.s_maxage = 86400
+        response.content_type = "image/svg+xml"
+        return response
+    else:
+        response.content_type = "application/json"
+        return response
 
 
 if __name__ == '__main__':
