@@ -45,7 +45,7 @@ def get_height(n: int = 1, padding: int = 26, top_offset: int = 45):  # pragma: 
 
 
 def roundrect(context: cairo.Context, 
-              x: int, y: int, width: int, height: int, r: int):
+              x: int, y: int, width: int, height: int, r: int):   # pragma: no cover 
     context.arc(x+r, y+r, r, math.pi, 3*math.pi/2)
     context.arc(x+width-r, y+r, r, 3*math.pi/2, 0)
     context.arc(x+width-r, y+height-r, r, 0, math.pi/2)
@@ -53,7 +53,7 @@ def roundrect(context: cairo.Context,
     context.close_path()
 
 
-def get_square(context: cairo.Context, x: int, y: int, bg_color: str):
+def get_square(context: cairo.Context, x: int, y: int, bg_color: str):  # pragma: no cover 
     s = 24  # images are 20px x 20px and square is 24px x 24px
     context.set_source_rgb(*hex_to_rgb(bg_color))
     roundrect(context, x-2, y-2, s, s, 4)
@@ -163,7 +163,7 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
     context.stroke()
 
 
-def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):
+def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # pragma: no cover 
     get_square(context, x_start+30, y, data.color)
     set_text(context, x_start+60, y, f"{data.title}:{data.value}", data.color)
     return place_icon(data.icon, x_start+30, y, from_CG=data.from_CG)

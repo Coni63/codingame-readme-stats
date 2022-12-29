@@ -5,13 +5,12 @@ from domain.i_profile import IProfileDto, IValue
 from domain.i_language import ILanguageDto
 from domain.i_achievement import IAchievementDto
 from domain.i_certification import ICertificationDto
-# from domain.i_ranking import IRankingDto
 from domain.i_user_info import IUserDto
 
 from infrastructure.codingame_api import get_points_from_rank
 
 
-def evaluate(data: IDataDto) -> IProfileDto:
+def evaluate(data: IDataDto) -> IProfileDto:  # pragma: no cover 
     (active_color, passive_color, score, label) = get_main_level(data)
 
     level_value = get_score_level(data.user)
@@ -60,18 +59,14 @@ def get_color_level(level: int) -> str:
 
 
 def get_color_from_string(string: str) -> str:
-    if string == "WOOD":
-        return constants.COLOR_WOOD
-    elif string == "BRONZE":
-        return constants.COLOR_BRONZE
-    elif string == "SILVER":
-        return constants.COLOR_SILVER
-    elif string == "GOLD":
-        return constants.COLOR_GOLD
-    elif string == "LEGEND":
-        return constants.COLOR_LEGEND
-    else:
-        return constants.COLOR_WOOD
+    mapping = {
+        "WOOD": constants.COLOR_WOOD,
+        "BRONZE": constants.COLOR_BRONZE,
+        "SILVER": constants.COLOR_SILVER,
+        "GOLD": constants.COLOR_GOLD,
+        "LEGEND": constants.COLOR_LEGEND,
+    }
+    return mapping.get(string, constants.COLOR_WOOD)
 
 
 def get_color_language(puzzle_solved: int) -> str:
