@@ -22,6 +22,9 @@ class TestGetAllDataMethods(unittest.IsolatedAsyncioTestCase):
 
         # There is warnings from asyncio with ResourceWarning: Enable tracemalloc to get the object allocation traceback
         warnings.simplefilter("ignore", category=ResourceWarning)
+        
+        # There is warnings from asyncio with DeprecationWarning: There is no current event loop
+        warnings.simplefilter("ignore", category=DeprecationWarning)
 
         if sys.platform.startswith("win"):
             asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
