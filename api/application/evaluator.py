@@ -19,7 +19,15 @@ def evaluate(data: IDataDto, online: bool = True) -> IProfileDto:  # pragma: no 
     rank_value = get_score_rank(data.user)
     comp_value = get_score_competition(data.rankings, online=online)
 
-    (active_color, passive_color, score, label) = get_main_level(data)
+    (active_color, passive_color, score, label) = get_main_level(
+        level_value,
+        certif_value,
+        top_language_value,
+        puzzle_solved_value,
+        achievements_value,
+        rank_value,
+        comp_value
+    )
 
     return IProfileDto(
         username=data.user.codingamer.pseudo,
@@ -75,13 +83,6 @@ def get_color_from_string(string: str) -> str:
         "LEGEND": constants.COLOR_LEGEND,
     }
     return mapping.get(string, constants.COLOR_WOOD)
-
-
-def get_global_label(score: float) -> str:
-    outputs = ["C", "B", "A", "S", "S+", "S++"]
-    thresholds = [49, 74, 89, 94, 98]
-
-    return _bind_value_to_range(score, thresholds, outputs)
 
 
 ##########################
@@ -265,8 +266,52 @@ def get_score_competition(rankings, online=False):
         )
 
 
-def get_main_level(data: IDataDto) -> tuple[str, str, str]:
-    main_color = constants.COLOR_LEGEND
+def get_global_score(level_value: IValue,
+                     certif_value: list[IValue],
+                     top_language_value: IValue,
+                     puzzle_solved_value: IValue,
+                     achievements_value: IValue,
+                     rank_value: IValue,
+                     comp_value: IValue
+                     ) -> float:
+    color_point = {
+        constants.COLOR_WOOD: 0, 
+        constants.COLOR_BRONZE: 1, 
+        constants.COLOR_SILVER: 2, 
+        constants.COLOR_GOLD: 3, 
+        constants.COLOR_LEGEND: 4
+    }
+    weigths: tuple[IValue, int] = [
+        (level_value, 50),
+        (certif_value, 10),
+        (top_language_value, 2),
+        (puzzle_solved_value, 5),
+        (achievements_value, 20),
+        (rank_value, 100),
+        (comp_value, 50),
+    ]
+
+    points = 0
+    max_points = 0
+    for value, weight in weigths:
+        if isinstance(value, list):
+            for element in value:
+                points += weight * color_point[element.color]
+            max_points += color_point[constants.COLOR_LEGEND] * weight * 5  # there is 5 certifications
+        else:
+            points += weight * color_point[value.color]
+            max_points += color_point[constants.COLOR_LEGEND] * weight
+
+    return 100 * points / max_points
+
+
+def get_main_level(*args) -> tuple[str, str, str]:
+    outputs = ["C", "B", "A", "S", "S+", "S++"]
+    thresholds = [25, 50, 75, 85, 95]
+
+    score = get_global_score(*args)
+
+    main_color = get_color(score, thresholds[:4], ascending=True)
     back_color = constants.BACK_COLOR[main_color]
-    score = 99.5
-    return (main_color, back_color, score, get_global_label(score))
+    label = _bind_value_to_range(score, thresholds, outputs)
+    return (main_color, back_color, score, label)

@@ -185,15 +185,31 @@ class TestEvaluatorMethods(unittest.TestCase):
             self.assertEqual(ans.value, target_value)
             self.assertEqual(ans.color, target_color)
 
-    def test_get_main_level(self):
+    def test_evaluate(self):
         targets = [
-            ("S", constants.COLOR_LEGEND),
-            ("S", constants.COLOR_LEGEND),
-            ("S", constants.COLOR_LEGEND),
-            ("S", constants.COLOR_LEGEND),
+            ("S+", constants.COLOR_LEGEND, 89),
+            ("S+", constants.COLOR_LEGEND, 89),
+            ("S+", constants.COLOR_LEGEND, 89),
+            ("S+", constants.COLOR_LEGEND, 89),
         ]
-        for fake_user, (target_value, target_color) in zip(self.users, targets):
-            (main_color, back_color, score, label) = get_main_level(fake_user)
+        for fake_user, (target_value, target_color, target_score) in zip(self.users, targets):
+            level_value = get_score_level(fake_user.user)
+            certif_value = get_score_certificate(fake_user.certifications)
+            top_language_value = get_score_best_language(fake_user.languages)
+            puzzle_solved_value = get_score_total_solved(fake_user.languages)
+            achievements_value = get_score_achievements(fake_user.achievements)
+            rank_value = get_score_rank(fake_user.user)
+            comp_value = get_score_competition(fake_user.rankings, online=False)
+
+            (active_color, passive_color, score, label) = get_main_level(
+                level_value,
+                certif_value,
+                top_language_value,
+                puzzle_solved_value,
+                achievements_value,
+                rank_value,
+                comp_value
+            )
             self.assertEqual(label, target_value)
-            self.assertEqual(main_color, target_color)
-            self.assertEqual(score, 90)
+            self.assertEqual(active_color, target_color)
+            self.assertTrue(abs(score - target_score) < 1)

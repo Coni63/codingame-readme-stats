@@ -49,37 +49,37 @@ class TestGetAllDataMethods(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(ans.rankings.puzzles), len(fake_data.FAKE_RANKING["puzzles"]))
         self.assertEqual(len(ans.achievements), len(fake_data.FAKE_ACHIVEMENTS))
 
-    # async def test_my_user_data(self):
-    #     # https://www.codingame.com/profile/de015f1a510d60cdcd0551896a34c709188072
-    #     codingamer = "de015f1a510d60cdcd0551896a34c709188072"
-    #     userId = 270881
+    async def test_my_user_data(self):
+        # https://www.codingame.com/profile/de015f1a510d60cdcd0551896a34c709188072
+        codingamer = "de015f1a510d60cdcd0551896a34c709188072"
+        userId = 270881
 
-    #     ans = await get_all_data(codingamer)
+        ans = await get_all_data(codingamer)
 
-    #     self.assertEqual(ans.user.codingamer.userId, userId)
-    #     self.assertIsInstance(ans, IDataDto)
+        self.assertEqual(ans.user.codingamer.userId, userId)
+        self.assertIsInstance(ans, IDataDto)
 
-    # async def test_other_user_data(self):
-    #     # https://www.codingame.com/profile/8374201b6f1d19eb99d61c80351465b65150051
-    #     codingamer = "8374201b6f1d19eb99d61c80351465b65150051"
-    #     userId = 1500515
+    async def test_other_user_data(self):
+        # https://www.codingame.com/profile/8374201b6f1d19eb99d61c80351465b65150051
+        codingamer = "8374201b6f1d19eb99d61c80351465b65150051"
+        userId = 1500515
 
-    #     ans = await get_all_data(codingamer)
+        ans = await get_all_data(codingamer)
 
-    #     self.assertEqual(ans.user.codingamer.userId, userId)
-    #     self.assertIsInstance(ans, IDataDto)
+        self.assertEqual(ans.user.codingamer.userId, userId)
+        self.assertIsInstance(ans, IDataDto)
 
-    # async def test_unknown_user_data(self):
-    #     codingamer = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    async def test_unknown_user_data(self):
+        codingamer = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 
-    #     with self.assertRaises(ValueError):
-    #         await get_all_data(codingamer)
+        with self.assertRaises(ValueError):
+            await get_all_data(codingamer)
 
-    # async def test_invalid_user_data(self):        
-    #     codingamer = "thisisinvalidcodingamer"
+    async def test_invalid_user_data(self):        
+        codingamer = "thisisinvalidcodingamer"
 
-    #     with self.assertRaises(ValueError):
-    #         await get_all_data(codingamer)
+        with self.assertRaises(ValueError):
+            await get_all_data(codingamer)
 
 
 if __name__ == '__main__':
