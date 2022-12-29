@@ -39,7 +39,6 @@ jobs:
       run: |
         cd api
         coverage run -m unittest discover
-        coverage xml
         coverage json
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0

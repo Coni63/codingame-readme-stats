@@ -1,6 +1,4 @@
-![code coverage](https://github.com/Coni63/codingame-readme-stats/actions/workflows/python-app.yml/badge.svg)
-
-[this subsubtext](code-coverage-results.md)
+![code coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Coni63/6c21abaea3a4f99c473fb817ce695722/raw/covbadge.json)
 
 ```
 cd api
@@ -14,6 +12,7 @@ cd api
 venv/Scripts/activate.ps1
 coverage run -m unittest discover
 coverage xml
+coverage json
 # coverage html
 # coverage report
 # python -m unittest discover
@@ -38,3 +37,4 @@ venv/Scripts/activate.ps1
 pip install -r requirements.txt
 ```
 
+https://nedbatchelder.com/blog/202209/making_a_coverage_badge.html
