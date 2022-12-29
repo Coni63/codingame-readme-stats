@@ -16,7 +16,7 @@ def get_card_for(codingamer):
     except ValueError as e:
         return {"message": str(e)}, 404
 
-    profile_data = evaluator.evaluate(user_datas)
+    profile_data = evaluator.evaluate(user_datas, online=False)
     svg = svg_builder.render(profile_data)
 
     if svg is not None:

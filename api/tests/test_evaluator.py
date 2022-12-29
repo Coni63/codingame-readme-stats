@@ -11,7 +11,8 @@ from application.evaluator import (
     get_score_achievements, 
     get_score_rank, 
     get_score_competition,
-    get_main_level
+    get_main_level,
+    get_color
 )
 from config import constants, fake_data_1, fake_data_2, fake_data_3, fake_data_4
 
@@ -64,6 +65,27 @@ class TestEvaluatorMethods(unittest.TestCase):
 
     def setUp(self):
         self.users = TestEvaluatorMethods.users
+
+    def test_get_color(self):
+
+        self.assertEqual(get_color(-100, [2, 4, 6, 8]), constants.COLOR_WOOD)
+        self.assertEqual(get_color(1, [2, 4, 6, 8]), constants.COLOR_WOOD)
+        self.assertEqual(get_color(2, [2, 4, 6, 8]), constants.COLOR_WOOD)
+        self.assertEqual(get_color(3, [2, 4, 6, 8]), constants.COLOR_BRONZE)
+        self.assertEqual(get_color(6, [2, 4, 6, 8]), constants.COLOR_SILVER)
+        self.assertEqual(get_color(8, [2, 4, 6, 8]), constants.COLOR_GOLD)
+        self.assertEqual(get_color(10, [2, 4, 6, 8]), constants.COLOR_LEGEND)
+
+        self.assertEqual(get_color(-100, [2, 4, 6, 8], ascending=False), constants.COLOR_LEGEND)
+        self.assertEqual(get_color(1, [2, 4, 6, 8], ascending=False), constants.COLOR_LEGEND)
+        self.assertEqual(get_color(2, [2, 4, 6, 8], ascending=False), constants.COLOR_LEGEND)
+        self.assertEqual(get_color(3, [2, 4, 6, 8], ascending=False), constants.COLOR_GOLD)
+        self.assertEqual(get_color(6, [2, 4, 6, 8], ascending=False), constants.COLOR_SILVER)
+        self.assertEqual(get_color(8, [2, 4, 6, 8], ascending=False), constants.COLOR_BRONZE)
+        self.assertEqual(get_color(10, [2, 4, 6, 8], ascending=False), constants.COLOR_WOOD)
+
+        with self.assertRaises(ValueError):
+            get_color(1, [2, 4, 5, 6, 7, 8])
 
     def test_get_score_level(self):
         targets = [
@@ -128,10 +150,10 @@ class TestEvaluatorMethods(unittest.TestCase):
 
     def test_get_score_rank(self):
         targets = [
-            ("664/637326", constants.COLOR_LEGEND),
-            ("664/637326", constants.COLOR_LEGEND),
-            ("664/637326", constants.COLOR_LEGEND),
-            ("664/637326", constants.COLOR_LEGEND),
+            ("664/637326", constants.COLOR_GOLD),
+            ("664/637326", constants.COLOR_GOLD),
+            ("664/637326", constants.COLOR_GOLD),
+            ("664/637326", constants.COLOR_GOLD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_rank(fake_user.user)
@@ -141,10 +163,10 @@ class TestEvaluatorMethods(unittest.TestCase):
     def test_get_score_competition(self):
         # ONLINE
         targets = [
-            ("753/3509", constants.COLOR_SILVER),
-            ("753/3509", constants.COLOR_SILVER),
-            ("753/3509", constants.COLOR_SILVER),
-            ("753/3509", constants.COLOR_SILVER),
+            ("753/3509", constants.COLOR_BRONZE),
+            ("753/3509", constants.COLOR_BRONZE),
+            ("753/3509", constants.COLOR_BRONZE),
+            ("753/3509", constants.COLOR_BRONZE),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_competition(fake_user.rankings, online=True)
@@ -171,6 +193,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             ("S", constants.COLOR_LEGEND),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
-            ans = get_main_level(fake_user)
-            self.assertEqual(ans.value, target_value)
-            self.assertEqual(ans.color, target_color)
+            (main_color, back_color, score, label) = get_main_level(fake_user)
+            self.assertEqual(label, target_value)
+            self.assertEqual(main_color, target_color)
+            self.assertEqual(score, 90)
