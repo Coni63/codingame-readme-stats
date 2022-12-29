@@ -1,4 +1,6 @@
-![code coverage](https://github.com/Coni63/codingame-readme-stats/actions/workflows/python-app/badge.svg)
+![code coverage](https://github.com/Coni63/codingame-readme-stats/actions/workflows/python-app.yml/badge.svg)
+
+[this subsubtext](code-coverage-results.md)
 
 ```
 cd api
