@@ -1,5 +1,5 @@
 ![code coverage](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/Coni63/6c21abaea3a4f99c473fb817ce695722/raw/covbadge.json)
-![tests results](https://github.com/Coni63/codingame-readme-stats/actions/workflows/python-app/badge.svg)
+![tests results](https://github.com/Coni63/codingame-readme-stats/actions/workflows/python-app.yml/badge.svg)
 
 ```
 cd api
