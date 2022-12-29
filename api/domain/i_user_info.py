@@ -1,56 +1,55 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
-from typing import Optional
 
 
 @dataclass_json
 @dataclass
 class IHistoricsDto:
-    clashPoints: list[int]
-    codegolfPoints: list[int]
-    contestPoints: list[int]
-    dates: list[int]
-    multiTrainingPoints: list[int]
-    optimPoints: list[int]
-    points: list[int]
-    ranks: list[int]
-    totals: list[int]
+    clashPoints: list[int] = field(default_factory=lambda: [])
+    codegolfPoints: list[int] = field(default_factory=lambda: [])
+    contestPoints: list[int] = field(default_factory=lambda: [])
+    dates: list[int] = field(default_factory=lambda: [])
+    multiTrainingPoints: list[int] = field(default_factory=lambda: [])
+    optimPoints: list[int] = field(default_factory=lambda: [])
+    points: list[int] = field(default_factory=lambda: [])
+    ranks: list[int] = field(default_factory=lambda: [])
+    totals: list[int] = field(default_factory=lambda: [])
 
 
 @dataclass_json
 @dataclass
 class IRankingDto:
-    codingamePointsAchievements: int
-    codingamePointsClash = int
-    codingamePointsCodegolf: int
-    codingamePointsContests: int
-    codingamePointsMultiTraining: int
-    codingamePointsOptim: int
-    codingamePointsRank: int
-    codingamePointsTotal: int
-    codingamePointsXp: int
     numberCodingamers: int
     numberCodingamersGlobal: int
     rankHistorics: IHistoricsDto
+    codingamePointsAchievements: int = 0
+    codingamePointsClash = int = 0
+    codingamePointsCodegolf: int = 0
+    codingamePointsContests: int = 0
+    codingamePointsMultiTraining: int = 0
+    codingamePointsOptim: int = 0
+    codingamePointsRank: int = 0
+    codingamePointsTotal: int = 0
+    codingamePointsXp: int = 0
 
 
 @dataclass_json
 @dataclass
 class ICodingameDto:
-    avatar: int
-    category: str
-    city: str
-    countryId: str
-    cover: int
-    enable: bool
-    formValues: dict
-    level: int 
-    pseudo: str
-    publicHandle: str
-    rank: int 
-    tagline: str
     userId: int 
-    xp: int 
+    pseudo: str
+    rank: int
+    level: int
+    formValues: dict = field(default_factory=lambda: {})
+    enable: bool = True
+    cover: int = 0
+    publicHandle: str = ""
+    tagline: str = ""
+    countryId: str = ""
+    city: str = ""
+    category: str = ""
+    avatar: int = 0
+    xp: int = 0
     company: str = ""
     schoolId: int = 0
 
@@ -58,19 +57,17 @@ class ICodingameDto:
 @dataclass_json
 @dataclass
 class ILevelDto:
-    cumulativeXp: int 
-    level: int 
-    xpThreshold: int 
-    rewardLanguages: Optional[dict] = None
+    cumulativeXp: int = 0
+    level: int = 0
+    xpThreshold: int = 0
+    rewardLanguages: dict = field(default_factory=lambda: {})
 
 
 @dataclass_json
 @dataclass
 class IUserDto:
-    achievementCount: int
     codingamePointsRankingDto: IRankingDto
     codingamer: ICodingameDto
-    codingamerPoints: int
-    xpThresholds: list[ILevelDto]
-
-
+    xpThresholds: list[ILevelDto] = field(default_factory=lambda: [])
+    codingamerPoints: int = 0
+    achievementCount: int = 0

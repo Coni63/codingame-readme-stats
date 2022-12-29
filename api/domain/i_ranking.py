@@ -1,6 +1,5 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from dataclasses_json import dataclass_json
-from typing import Optional
 
 
 @dataclass_json
@@ -30,15 +29,14 @@ class IPuzzleDto:
     ranking: int
     totalPlayers: int
     puzzleType: str
-    points: Optional[float] = 0.0                 # not in codegolf
-    ranksByLanguage: Optional[dict] = None        # only for codegolf instead of points
-    totalPlayersByLanguage: Optional[dict] = None # only for codegolf instead of points
-    pointsByLanguage: Optional[dict] = None       # only for codegolf instead of points
+    points: float = 0.0  # not in codegolf
+    ranksByLanguage: dict = field(default_factory=lambda: {})  # only for codegolf instead of points
+    totalPlayersByLanguage: dict = field(default_factory=lambda: {})  # only for codegolf instead of points
+    pointsByLanguage: dict = field(default_factory=lambda: {})  # only for codegolf instead of points
 
 
 @dataclass_json
 @dataclass
 class IRankingDto:
-    challenges: list[IChallengeDto]
-    puzzles: list[IPuzzleDto]
-    
+    challenges: list[IChallengeDto] = field(default_factory=lambda: [])
+    puzzles: list[IPuzzleDto] = field(default_factory=lambda: [])
