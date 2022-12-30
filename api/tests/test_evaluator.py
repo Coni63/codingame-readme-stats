@@ -90,9 +90,9 @@ class TestEvaluatorMethods(unittest.TestCase):
     def test_get_score_level(self):
         targets = [
             (38, constants.COLOR_LEGEND),
-            (38, constants.COLOR_LEGEND),
-            (38, constants.COLOR_LEGEND),
-            (38, constants.COLOR_LEGEND),
+            (56, constants.COLOR_LEGEND),
+            (21, constants.COLOR_SILVER),
+            (9, constants.COLOR_WOOD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_level(fake_user.user)
@@ -103,8 +103,8 @@ class TestEvaluatorMethods(unittest.TestCase):
         targets = [
             (5, "LEGEND", constants.COLOR_LEGEND),
             (5, "LEGEND", constants.COLOR_LEGEND),
-            (5, "LEGEND", constants.COLOR_LEGEND),
-            (5, "LEGEND", constants.COLOR_LEGEND),
+            (5, "WOOD", constants.COLOR_WOOD),
+            (5, "WOOD", constants.COLOR_WOOD),
         ]
         for fake_user, (length, target_value, target_color) in zip(self.users, targets):
             ans = get_score_certificate(fake_user.certifications)
@@ -115,9 +115,9 @@ class TestEvaluatorMethods(unittest.TestCase):
     def test_get_score_best_language(self):
         targets = [
             ("Python 3", constants.COLOR_LEGEND),
-            ("Python 3", constants.COLOR_LEGEND),
-            ("Python 3", constants.COLOR_LEGEND),
-            ("Python 3", constants.COLOR_LEGEND),
+            ("C#", constants.COLOR_LEGEND),
+            ("Python 3", constants.COLOR_BRONZE),
+            ("Swift", constants.COLOR_WOOD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_best_language(fake_user.languages)
@@ -127,9 +127,9 @@ class TestEvaluatorMethods(unittest.TestCase):
     def test_get_score_total_solved(self):
         targets = [
             (371, constants.COLOR_LEGEND),
-            (371, constants.COLOR_LEGEND),
-            (371, constants.COLOR_LEGEND),
-            (371, constants.COLOR_LEGEND),
+            (759, constants.COLOR_LEGEND),
+            (40, constants.COLOR_BRONZE),
+            (4, constants.COLOR_WOOD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_total_solved(fake_user.languages)
@@ -139,9 +139,9 @@ class TestEvaluatorMethods(unittest.TestCase):
     def test_get_score_achievements(self):
         targets = [
             ("127/146", constants.COLOR_GOLD),
-            ("127/146", constants.COLOR_GOLD),
-            ("127/146", constants.COLOR_GOLD),
-            ("127/146", constants.COLOR_GOLD),
+            ("137/146", constants.COLOR_LEGEND),
+            ("83/146", constants.COLOR_BRONZE),
+            ("15/146", constants.COLOR_WOOD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_achievements(fake_user.achievements)
@@ -151,9 +151,9 @@ class TestEvaluatorMethods(unittest.TestCase):
     def test_get_score_rank(self):
         targets = [
             ("664/637326", constants.COLOR_GOLD),
-            ("664/637326", constants.COLOR_GOLD),
-            ("664/637326", constants.COLOR_GOLD),
-            ("664/637326", constants.COLOR_GOLD),
+            ("4/640418", constants.COLOR_LEGEND),
+            ("2411/640418", constants.COLOR_SILVER),
+            ("9902/640418", constants.COLOR_BRONZE),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_rank(fake_user.user)
@@ -164,9 +164,9 @@ class TestEvaluatorMethods(unittest.TestCase):
         # ONLINE
         targets = [
             ("753/3509", constants.COLOR_BRONZE),
-            ("753/3509", constants.COLOR_BRONZE),
-            ("753/3509", constants.COLOR_BRONZE),
-            ("753/3509", constants.COLOR_BRONZE),
+            ("5/4228", constants.COLOR_LEGEND),
+            ("391/2162", constants.COLOR_BRONZE),
+            ("489/4955", constants.COLOR_SILVER),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_competition(fake_user.rankings, online=True)
@@ -176,9 +176,9 @@ class TestEvaluatorMethods(unittest.TestCase):
         # OFFLINE
         targets = [
             ("843/170225", constants.COLOR_LEGEND),
-            ("843/170225", constants.COLOR_LEGEND),
-            ("843/170225", constants.COLOR_LEGEND),
-            ("843/170225", constants.COLOR_LEGEND),
+            ("3/3962", constants.COLOR_LEGEND),
+            ("939/6267", constants.COLOR_SILVER),
+            ("693/6859", constants.COLOR_SILVER),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
             ans = get_score_competition(fake_user.rankings, online=False)
@@ -188,9 +188,9 @@ class TestEvaluatorMethods(unittest.TestCase):
     def test_evaluate(self):
         targets = [
             ("S+", constants.COLOR_LEGEND, 89),
-            ("S+", constants.COLOR_LEGEND, 89),
-            ("S+", constants.COLOR_LEGEND, 89),
-            ("S+", constants.COLOR_LEGEND, 89),
+            ("S++", constants.COLOR_LEGEND, 100),
+            ("B", constants.COLOR_BRONZE, 42),
+            ("C", constants.COLOR_WOOD, 19),
         ]
         for fake_user, (target_value, target_color, target_score) in zip(self.users, targets):
             level_value = get_score_level(fake_user.user)
