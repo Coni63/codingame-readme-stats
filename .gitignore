@@ -1,2 +1,7 @@
 **/__pycache__/**
 **/venv/**
+**/analysis/**
+**/coverage.xml
+**/.coverage
+**/.vscode/**
+**/htmlcov/**
