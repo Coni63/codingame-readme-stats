@@ -225,6 +225,9 @@ def render(data: IProfileDto) -> str:  # pragma: no cover
 
     # merge all svg in one
     fig = svgutils.transform.SVGFigure()
-    fig.set_size(("{constants.SVG_width}px", "{constants.SVG_height}px"))
+    fig.set_size((f"{constants.SVG_width}px", f"{constants.SVG_height}px"))
+    fig.root.set("id", "cg-readme-stats-user-details")
+    fig.root.set("role", "presentation")
+    fig.root.set("viewBox", f"0 0 {constants.SVG_width} {constants.SVG_height}")  
     fig.append(all_elements)
     return fig.to_str()
