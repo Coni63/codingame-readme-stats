@@ -140,7 +140,7 @@ def get_score_certificate(certifications: list[ICertificationDto]) -> list[IValu
         idx = order.index(certification.category)
         level = certification.level
         ans[idx] = IValue(
-            value=level, 
+            value=level.capitalize(), 
             color=get_color_from_string(level),
             title=titles[certification.category],
             icon=icons[certification.category],
