@@ -101,10 +101,10 @@ class TestEvaluatorMethods(unittest.TestCase):
 
     def test_get_score_certificate(self):
         targets = [
-            (5, "LEGEND", constants.COLOR_LEGEND),
-            (5, "LEGEND", constants.COLOR_LEGEND),
-            (5, "WOOD", constants.COLOR_WOOD),
-            (5, "WOOD", constants.COLOR_WOOD),
+            (5, "Legend", constants.COLOR_LEGEND),
+            (5, "Legend", constants.COLOR_LEGEND),
+            (5, "Wood", constants.COLOR_WOOD),
+            (5, "Wood", constants.COLOR_WOOD),
         ]
         for fake_user, (length, target_value, target_color) in zip(self.users, targets):
             ans = get_score_certificate(fake_user.certifications)

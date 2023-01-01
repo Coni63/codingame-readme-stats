@@ -129,7 +129,7 @@ def get_score_certificate(certifications: list[ICertificationDto]) -> list[IValu
     }
 
     ans = [IValue(
-        value="WOOD", 
+        value="Wood", 
         color=constants.COLOR_WOOD, 
         title=titles[cat],
         icon=icons[cat],
