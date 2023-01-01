@@ -22,8 +22,10 @@ BACK_COLOR = {
     COLOR_WOOD : "#bde2ba",
 }
 
-FONT_NAME = "Sans-Serif"
-
+# FONT_NAME = "Sans-Serif"
+FONT_NAME = "Lato"
+# FONT_NAME = "Roboto"
+ 
 SVG_width = 695
 SVG_height = 205
 SVG_border_radius = 20
