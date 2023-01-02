@@ -11,7 +11,7 @@
 
 <p align="center">
     Inspired by <a href="https://github.com/anuraghazra/github-readme-stats" target="_blank">github-readme-stats</a>, I wanted to make a similar tool for codingame profiles. <br><br>
-    <img alt="Coverage" src="assets/badge.svg" width="700px" height="205px"/>
+    <img alt="Coverage" src="assets/badge_certifications.svg" width="700px" height="205px"/>
 </p>
 
 # How to use
@@ -34,6 +34,40 @@ In your profile, you can choose to associate it with an online challenge or an o
 ```md
 ![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>?online=true)
 ```
+<p align="center">
+    <img alt="Coverage" src="assets/badge_simple_category.svg" width="700px" height="205px"/>
+</p>
+
+### Select the second category
+
+You can decide to display or not a second section. This is done by setting the argument `display=languages|certifications|none`. 
+
+> Default: `display = none`
+
+```md
+![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>?online=false&display=certifications)
+```
+<p align="center">
+    <img alt="Coverage" src="assets/badge_certifications.svg" width="700px" height="205px"/>
+</p>
+
+If `display=languages` you can use an extra argument `top=6` to specify the number of languages to display (max = 6)
+
+> Default: `top = 6`
+
+```md
+![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>?online=false&display=languages)
+```
+<p align="center">
+    <img alt="Coverage" src="assets/badge_languages.svg" width="700px" height="205px"/>
+</p>
+
+```md
+![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>?online=false&display=languages&top=3)
+```
+<p align="center">
+    <img alt="Coverage" src="assets/badge_languages_top.svg" width="700px" height="205px"/>
+</p>
 
 # Maths
 
