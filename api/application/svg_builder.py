@@ -83,10 +83,10 @@ def draw_line(context: cairo.Context,
     context.stroke()
 
 
-def draw_borders(context: cairo.Context, color: str, line_width: int=5):  # pragma: no cover
+def draw_borders(context: cairo.Context, width, height, color: str, line_thk: int=5):  # pragma: no cover
     context.set_source_rgb(*hex_to_rgb(color))
-    context.set_line_width(line_width)
-    roundrect(context, 0, 0, constants.SVG_width, constants.SVG_height, constants.SVG_border_radius)
+    context.set_line_width(line_thk)
+    roundrect(context, 0, 0, width, height, constants.SVG_border_radius)
     context.stroke()
 
 
@@ -169,18 +169,23 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # prag
     return place_icon(data.icon, x_start+30, y, from_CG=data.from_CG)
 
 
-def render(data: IProfileDto) -> str:  # pragma: no cover
+def render(data: IProfileDto, second_category=None, second_category_number=6) -> str:  # pragma: no cover
 
     f = BytesIO()
 
     c1 = 160  # x position of the first section
     c2 = 410  # x position of the second section
 
-    with cairo.SVGSurface(f, constants.SVG_width, constants.SVG_height) as surface:
+    if second_category is None:
+        width_img = constants.SVG_width_simple
+    else:
+        width_img = constants.SVG_width_double
+
+    with cairo.SVGSurface(f, width_img, constants.SVG_height) as surface:
         # creating a cairo context object
         context = cairo.Context(surface)
 
-        draw_borders(context, data.active_color)
+        draw_borders(context, width_img, constants.SVG_height, data.active_color)
 
         get_title(context, data.username, 20, 35, font_color=data.active_color)
 
@@ -189,9 +194,10 @@ def render(data: IProfileDto) -> str:  # pragma: no cover
         create_pie(context, 80, y_pie, 50, data.score, active_color=data.active_color,
                    passive_color=data.passive_color, label=data.main_rank)
 
-        # DRAW SEPARATORS
+        # DRAW SEPARATOR
         draw_line(context, c1, 55, c1, constants.SVG_height-20, data.active_color)
-        draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
+
+        list_other_svg = []
 
         # add text with relevant icons -- part from global stats
         SVG_GLOBAL_RANK   = add_row(context, c1, get_height(1), data.rank)
@@ -201,30 +207,41 @@ def render(data: IProfileDto) -> str:  # pragma: no cover
         SVG_BEST_LANGUAGE = add_row(context, c1, get_height(5), data.language)
         SVG_HIGHEST_COMP  = add_row(context, c1, get_height(6), data.competition)
 
-        # add text with relevant icons -- part from certifications
-        SVG_collaboration = add_row(context, c2, get_height(1.5), data.certifications[0])
-        SVG_algorithmes   = add_row(context, c2, get_height(2.5), data.certifications[1])
-        SVG_optimization  = add_row(context, c2, get_height(3.5), data.certifications[2])
-        SVG_speed         = add_row(context, c2, get_height(4.5), data.certifications[3])
-        SVG_AI            = add_row(context, c2, get_height(5.5), data.certifications[4])
+        list_other_svg += [SVG_GLOBAL_RANK, SVG_PUZZLE_SOLVED, SVG_LEVEL, SVG_SUCCESS, SVG_BEST_LANGUAGE, SVG_HIGHEST_COMP]
+
+        if second_category == "certifications":
+            draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
+
+            # add text with relevant icons -- part from certifications
+            SVG_collaboration = add_row(context, c2, get_height(1.5), data.certifications[0])
+            SVG_algorithmes   = add_row(context, c2, get_height(2.5), data.certifications[1])
+            SVG_optimization  = add_row(context, c2, get_height(3.5), data.certifications[2])
+            SVG_speed         = add_row(context, c2, get_height(4.5), data.certifications[3])
+            SVG_AI            = add_row(context, c2, get_height(5.5), data.certifications[4])
+
+            list_other_svg += [SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI]
+
+        elif second_category == "languages":
+            draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
+
+            # add text with relevant icons -- part from top languages
+            subset = data.lang_list[:second_category_number]  # if there is less than the requested number, no issue
+            num_elems = len(subset)
+            offset = 4 - 0.5 * num_elems
+            for i, language in enumerate(subset):
+                svg = add_row(context, c2, get_height(i + offset), language)
+                list_other_svg.append(svg)
 
     all_elements = [
         etree.XML(f.getvalue()),  # main card that we merge with external icons
-        SVG_collaboration, 
-        SVG_algorithmes, 
-        SVG_optimization, 
-        SVG_speed, 
-        SVG_AI, 
-        SVG_GLOBAL_RANK,
-        SVG_PUZZLE_SOLVED,
-        SVG_LEVEL,
-        SVG_SUCCESS,
-        SVG_BEST_LANGUAGE,
-        SVG_HIGHEST_COMP
+        *list_other_svg
     ]
 
     # merge all svg in one
     fig = svgutils.transform.SVGFigure()
-    fig.set_size(("{constants.SVG_width}px", "{constants.SVG_height}px"))
+    fig.set_size((f"{width_img}px", f"{constants.SVG_height}px"))
+    fig.root.set("id", "cg-readme-stats-user-details")
+    fig.root.set("role", "presentation")
+    fig.root.set("viewBox", f"0 0 {width_img} {constants.SVG_height}")  
     fig.append(all_elements)
     return fig.to_str()

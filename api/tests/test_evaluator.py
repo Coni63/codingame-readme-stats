@@ -12,7 +12,8 @@ from application.evaluator import (
     get_score_rank, 
     get_score_competition,
     get_main_level,
-    get_color
+    get_color,
+    get_score_list_language,
 )
 from config import constants, fake_data_1, fake_data_2, fake_data_3, fake_data_4
 
@@ -101,10 +102,10 @@ class TestEvaluatorMethods(unittest.TestCase):
 
     def test_get_score_certificate(self):
         targets = [
-            (5, "LEGEND", constants.COLOR_LEGEND),
-            (5, "LEGEND", constants.COLOR_LEGEND),
-            (5, "WOOD", constants.COLOR_WOOD),
-            (5, "WOOD", constants.COLOR_WOOD),
+            (5, "Legend", constants.COLOR_LEGEND),
+            (5, "Legend", constants.COLOR_LEGEND),
+            (5, "Wood", constants.COLOR_WOOD),
+            (5, "Wood", constants.COLOR_WOOD),
         ]
         for fake_user, (length, target_value, target_color) in zip(self.users, targets):
             ans = get_score_certificate(fake_user.certifications)
@@ -184,6 +185,18 @@ class TestEvaluatorMethods(unittest.TestCase):
             ans = get_score_competition(fake_user.rankings, online=False)
             self.assertEqual(ans.value, target_value)
             self.assertEqual(ans.color, target_color)
+
+    def test_get_score_list_language(self):
+        targets = [
+            (6, constants.COLOR_LEGEND),  # number of elements and color of the first one
+            (6, constants.COLOR_LEGEND),
+            (3, constants.COLOR_BRONZE),
+            (1, constants.COLOR_WOOD),
+        ]
+        for fake_user, (target_value, target_color) in zip(self.users, targets):
+            ans = get_score_list_language(fake_user.languages)
+            self.assertEqual(len(ans), target_value)
+            self.assertEqual(ans[0].color, target_color)
 
     def test_evaluate(self):
         targets = [

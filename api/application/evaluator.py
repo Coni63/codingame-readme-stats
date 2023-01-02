@@ -18,6 +18,7 @@ def evaluate(data: IDataDto, online: bool = True) -> IProfileDto:  # pragma: no 
     achievements_value = get_score_achievements(data.achievements)
     rank_value = get_score_rank(data.user)
     comp_value = get_score_competition(data.rankings, online=online)
+    lang_list = get_score_list_language(data.languages)
 
     (active_color, passive_color, score, label) = get_main_level(
         level_value,
@@ -41,7 +42,8 @@ def evaluate(data: IDataDto, online: bool = True) -> IProfileDto:  # pragma: no 
         achievements=achievements_value,
         rank=rank_value,
         competition=comp_value,
-        score=score
+        score=score,
+        lang_list=lang_list
     )
 
 ##########################
@@ -129,7 +131,7 @@ def get_score_certificate(certifications: list[ICertificationDto]) -> list[IValu
     }
 
     ans = [IValue(
-        value="WOOD", 
+        value="Wood", 
         color=constants.COLOR_WOOD, 
         title=titles[cat],
         icon=icons[cat],
@@ -140,7 +142,7 @@ def get_score_certificate(certifications: list[ICertificationDto]) -> list[IValu
         idx = order.index(certification.category)
         level = certification.level
         ans[idx] = IValue(
-            value=level, 
+            value=level.capitalize(), 
             color=get_color_from_string(level),
             title=titles[certification.category],
             icon=icons[certification.category],
@@ -160,6 +162,26 @@ def get_score_best_language(languages: list[ILanguageDto]) -> IValue:
         icon=constants.SVG_BEST_LANGUAGE,
         from_CG=False
     )
+
+
+def get_score_list_language(languages: list[ILanguageDto]) -> list[IValue]:
+    thresholds = [10, 25, 50, 100]
+    svgs = [
+        constants.SVG_TOP_1, 
+        constants.SVG_TOP_2, 
+        constants.SVG_TOP_3, 
+        constants.SVG_TOP_4, 
+        constants.SVG_TOP_5, 
+        constants.SVG_TOP_6
+    ]
+    top = sorted(languages, key=lambda x: x.puzzleCount, reverse=True)
+    return [IValue(
+        value=f"{lang.puzzleCount} puzzles" if lang.puzzleCount > 1 else "1 puzzle", 
+        color=get_color(lang.puzzleCount, thresholds, ascending=True),
+        title=lang.languageName,
+        icon=svg,
+        from_CG=False
+    ) for svg, lang in zip(svgs, top)]
 
 
 def get_score_total_solved(languages: list[ILanguageDto]) -> IValue:

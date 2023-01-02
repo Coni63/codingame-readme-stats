@@ -24,3 +24,4 @@ class IProfileDto:
     achievements: IValue
     rank: IValue
     competition: IValue
+    lang_list: list[IValue]
