@@ -26,7 +26,8 @@ BACK_COLOR = {
 FONT_NAME = "Lato"
 # FONT_NAME = "Roboto"
  
-SVG_width = 695
+SVG_width_simple = 410
+SVG_width_double = 695
 SVG_height = 205
 SVG_border_radius = 20
 

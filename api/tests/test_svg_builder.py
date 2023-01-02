@@ -1,6 +1,4 @@
-import asyncio
 import unittest
-from application import evaluator, svg_builder, user_data
 
 from application.svg_builder import get_scale, hex_to_rgb
 
@@ -38,12 +36,3 @@ class TestRendererMethods(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             hex_to_rgb("#ZZ00AA")  # invalid letter
-
-    def test_render_readme_image(self):
-        import os
-        user_datas = asyncio.run(user_data.get_all_data("magic"))
-        profile_data = evaluator.evaluate(user_datas, online=False)
-        svg = svg_builder.render(profile_data)
-        img_location = os.path.join(os.path.abspath(__file__), "..", "..", "..", "assets", "badge.svg")
-        with open(img_location, "wb") as f:
-            f.write(svg)

@@ -83,10 +83,10 @@ def draw_line(context: cairo.Context,
     context.stroke()
 
 
-def draw_borders(context: cairo.Context, color: str, line_width: int=5):  # pragma: no cover
+def draw_borders(context: cairo.Context, width, height, color: str, line_thk: int=5):  # pragma: no cover
     context.set_source_rgb(*hex_to_rgb(color))
-    context.set_line_width(line_width)
-    roundrect(context, 0, 0, constants.SVG_width, constants.SVG_height, constants.SVG_border_radius)
+    context.set_line_width(line_thk)
+    roundrect(context, 0, 0, width, height, constants.SVG_border_radius)
     context.stroke()
 
 
@@ -177,13 +177,15 @@ def render(data: IProfileDto, second_category=None, second_category_number=6) ->
     c2 = 410  # x position of the second section
 
     if second_category is None:
-        constants.SVG_width = 410
+        width_img = constants.SVG_width_simple
+    else:
+        width_img = constants.SVG_width_double
 
-    with cairo.SVGSurface(f, constants.SVG_width, constants.SVG_height) as surface:
+    with cairo.SVGSurface(f, width_img, constants.SVG_height) as surface:
         # creating a cairo context object
         context = cairo.Context(surface)
 
-        draw_borders(context, data.active_color)
+        draw_borders(context, width_img, constants.SVG_height, data.active_color)
 
         get_title(context, data.username, 20, 35, font_color=data.active_color)
 
@@ -219,7 +221,7 @@ def render(data: IProfileDto, second_category=None, second_category_number=6) ->
 
             list_other_svg += [SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI]
 
-        elif second_category == "language":
+        elif second_category == "languages":
             draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
 
             # add text with relevant icons -- part from top languages
@@ -237,9 +239,9 @@ def render(data: IProfileDto, second_category=None, second_category_number=6) ->
 
     # merge all svg in one
     fig = svgutils.transform.SVGFigure()
-    fig.set_size((f"{constants.SVG_width}px", f"{constants.SVG_height}px"))
+    fig.set_size((f"{width_img}px", f"{constants.SVG_height}px"))
     fig.root.set("id", "cg-readme-stats-user-details")
     fig.root.set("role", "presentation")
-    fig.root.set("viewBox", f"0 0 {constants.SVG_width} {constants.SVG_height}")  
+    fig.root.set("viewBox", f"0 0 {width_img} {constants.SVG_height}")  
     fig.append(all_elements)
     return fig.to_str()
