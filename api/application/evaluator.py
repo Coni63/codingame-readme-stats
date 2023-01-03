@@ -1,3 +1,4 @@
+from __future__ import annotations
 from config import constants
 
 from domain.i_data import IDataDto
@@ -153,6 +154,18 @@ def get_score_certificate(certifications: list[ICertificationDto]) -> list[IValu
 
 def get_score_best_language(languages: list[ILanguageDto]) -> IValue:
     thresholds = [10, 25, 50, 100]
+
+    # filter added for profiles like:
+    # https://www.codingame.com/profile/0bea6253b3749971f42264b5a9f61c47439016
+    # profile Top 133 but everything is missing
+    if len(languages) == 0:  
+        return IValue(
+            value="N/A", 
+            color=constants.COLOR_WOOD,
+            title="Best Language",
+            icon=constants.SVG_BEST_LANGUAGE,
+            from_CG=False
+        )
 
     top = max(languages, key=lambda x: x.puzzleCount)
     return IValue(

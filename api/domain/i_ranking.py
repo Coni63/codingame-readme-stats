@@ -11,10 +11,10 @@ class IChallengeDto:
     publicId: str
     privateChallenge: bool
     predefinedTestId: int
-    ranking: int
     total: int
     points: int
     maxPoints: int
+    ranking: int = 0
 
 
 @dataclass_json
@@ -26,9 +26,9 @@ class IPuzzleDto:
     labelTitleId: int 
     lastActivity: int 
     labelTitle:  str
-    ranking: int
     totalPlayers: int
     puzzleType: str
+    ranking: int = 0
     points: float = 0.0  # not in codegolf
     ranksByLanguage: dict = field(default_factory=lambda: {})  # only for codegolf instead of points
     totalPlayersByLanguage: dict = field(default_factory=lambda: {})  # only for codegolf instead of points

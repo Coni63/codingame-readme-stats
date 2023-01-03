@@ -71,6 +71,9 @@ def get_points_from_rank(position: int, total: int, base: int = 5000) -> float:
     if base <= 0: 
         raise ValueError("base must be a positive integer")
 
+    if total == 0:  # Detective Pikaptcha has 0 total and 0 in rankings
+        return 0
+
     b = int(base * min(total/500, 1))
     p = (total - position + 1) / total
     return round(math.pow(b, p))

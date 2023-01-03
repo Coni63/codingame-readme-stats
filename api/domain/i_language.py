@@ -13,15 +13,15 @@ class ICertificateDto:
     comparativeScore: float
     communityStats: list[int]
     lowerScoreWarning: bool
-    candidateId: int
     codingamerId: int
     certificationHistoryId: int
     handle: str
     visible: bool
     date: int
-    diplomaPreviewId: int
-    type: str
-    legacy: bool
+    diplomaPreviewId: int = 0
+    type: str = ""
+    legacy: bool = False
+    candidateId: int = 0
 
 
 @dataclass_json
