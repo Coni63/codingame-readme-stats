@@ -5,3 +5,5 @@
 **/.coverage
 **/.vscode/**
 **/htmlcov/**
+
+api/cache/**
