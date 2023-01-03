@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 
-from domain.i_user_info import IUserDto
-from domain.i_language import ILanguageDto
-from domain.i_certification import ICertificationDto
-from domain.i_achievement import IAchievementDto
-from domain.i_ranking import IRankingDto
+from domain.interfaces.i_user_info import IUserDto
+from domain.interfaces.i_language import ILanguageDto
+from domain.interfaces.i_certification import ICertificationDto
+from domain.interfaces.i_achievement import IAchievementDto
+from domain.interfaces.i_ranking import IRankingDto
 
 
 @dataclass_json

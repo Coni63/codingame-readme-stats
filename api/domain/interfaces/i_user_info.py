@@ -37,7 +37,6 @@ class IRankingDto:
 @dataclass
 class ICodingameDto:
     userId: int 
-    pseudo: str
     rank: int
     level: int
     formValues: dict = field(default_factory=lambda: {})
@@ -52,6 +51,7 @@ class ICodingameDto:
     xp: int = 0
     company: str = ""
     schoolId: int = 0
+    pseudo: str = ""
 
 
 @dataclass_json

@@ -2,6 +2,7 @@ import unittest
 
 from infrastructure.codingame_api import get_points_from_rank
 
+
 class TestPointsMethods(unittest.TestCase):
 
     def test_winner(self):
@@ -22,7 +23,7 @@ class TestPointsMethods(unittest.TestCase):
         self.assertEqual(get_points_from_rank(44, 581, base=BASE), 1401)
         self.assertEqual(get_points_from_rank(60, 358, base=BASE), 521)
 
-        BASE = 5000 # battle bot
+        BASE = 5000  # battle bot
         self.assertEqual(get_points_from_rank(420, 2662, base=BASE), 1308)
         self.assertEqual(get_points_from_rank(543, 6260, base=BASE), 2392)
         self.assertEqual(get_points_from_rank(1754, 2815, base=BASE), 25)
@@ -38,6 +39,7 @@ class TestPointsMethods(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             get_points_from_rank(500, 5000, base=0)
+
 
 if __name__ == '__main__':
     unittest.main()

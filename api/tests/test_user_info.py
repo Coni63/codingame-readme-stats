@@ -5,8 +5,8 @@ import unittest
 import warnings
 
 from marshmallow.warnings import RemovedInMarshmallow4Warning
-from domain.i_data import IDataDto
-from application.user_data import get_all_data
+from domain import IDataDto
+from application.data_fetcher import get_all_data
 from config import fake_data_1 as fake_data
 
 

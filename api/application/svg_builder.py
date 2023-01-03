@@ -1,14 +1,16 @@
+from __future__ import annotations
+
 import math
 import re
 import cairo
-from io import BytesIO
-
-from config import constants
 import base64 
 import svgutils
+
+from io import BytesIO
 from lxml import etree
 
-from domain.i_profile import IProfileDto, IValue
+from config import constants
+from domain import IProfileDto, IValue
 
 ##########################
 # helpers

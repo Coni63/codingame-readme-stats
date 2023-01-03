@@ -201,9 +201,6 @@ C : score above 25/100
 
 # Future versions
 
-- cache requested datas to reduce the number of requests toward CG's servers
-- generate another svg for languages similar to github-readme-stats
-- add args to allows user to specify fields in the main banner (similar to `online`'s argument)
 - add args to scale svg to a specific size
 
 Other ideas are welcome 😉
