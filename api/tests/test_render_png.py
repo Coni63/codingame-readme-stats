@@ -3,13 +3,14 @@ import unittest
 
 from pathlib import Path
 
-from application import evaluator, svg_builder, user_data
+from application import svg_builder, data_fetcher
+from domain import evaluator
 
 
 class TestRendererMethods(unittest.TestCase):
 
     def test_render_readme_image(self):
-        user_datas = asyncio.run(user_data.get_all_data("magic"))
+        user_datas = asyncio.run(data_fetcher.get_all_data("magic"))
         profile_data = evaluator.evaluate(user_datas, online=False)
 
         root = Path('.').resolve().parent / "assets"

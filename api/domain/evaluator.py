@@ -1,12 +1,15 @@
 from __future__ import annotations
 from config import constants
 
-from domain.i_data import IDataDto
-from domain.i_profile import IProfileDto, IValue
-from domain.i_language import ILanguageDto
-from domain.i_achievement import IAchievementDto
-from domain.i_certification import ICertificationDto
-from domain.i_user_info import IUserDto
+from domain import (
+    IDataDto,
+    IProfileDto, 
+    IValue,
+    ILanguageDto,
+    IAchievementDto,
+    ICertificationDto,
+    IUserDto,
+)
 
 from infrastructure.codingame_api import get_points_from_rank
 

@@ -3,7 +3,7 @@ import warnings
 
 from marshmallow.warnings import RemovedInMarshmallow4Warning
 
-from application.evaluator import (
+from domain.evaluator import (
     get_score_level, 
     get_score_certificate, 
     get_score_best_language, 
@@ -17,12 +17,7 @@ from application.evaluator import (
 )
 from config import constants, fake_data_1, fake_data_2, fake_data_3, fake_data_4
 
-from domain.i_user_info import IUserDto
-from domain.i_language import ILanguageDto
-from domain.i_certification import ICertificationDto
-from domain.i_achievement import IAchievementDto
-from domain.i_data import IDataDto
-from domain.i_ranking import IRankingDto
+from domain import IUserDto, ILanguageDto, ICertificationDto, IAchievementDto, IDataDto, IRankingDto
 
 
 class TestEvaluatorMethods(unittest.TestCase):

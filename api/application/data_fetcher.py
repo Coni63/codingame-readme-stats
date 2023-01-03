@@ -3,12 +3,14 @@ import asyncio
 import re 
 from infrastructure import codingame_api
 
-from domain.i_user_info import IUserDto
-from domain.i_language import ILanguageDto
-from domain.i_certification import ICertificationDto
-from domain.i_achievement import IAchievementDto
-from domain.i_data import IDataDto
-from domain.i_ranking import IRankingDto
+from domain import (
+    IUserDto, 
+    ILanguageDto, 
+    ICertificationDto, 
+    IAchievementDto, 
+    IDataDto, 
+    IRankingDto
+)
 
 
 async def _get_user_data(codingamer: str, session: aiohttp.ClientSession) -> IUserDto:
