@@ -11,7 +11,7 @@
 
 <p align="center">
     Inspired by <a href="https://github.com/anuraghazra/github-readme-stats" target="_blank">github-readme-stats</a>, I wanted to make a similar tool for codingame profiles. <br><br>
-    <img alt="Coverage" src="assets/badge_certifications.svg" width="700px" height="205px"/>
+    <img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic?online=false&display=certifications" width="700px" height="205px"/>
 </p>
 
 # How to use
@@ -20,10 +20,18 @@
 
 - Copy-paste this code snippet into your markdown content
 ```md
-![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>)
 ```
+
 - Replace the `<your_codingamer_id>` with your id. your codingamer ID can be found in the url of your own profile `https://www.codingame.com/profile/<your_codingamer_id>`
 - That is it 👍.
+
+You can also use `<img>` html tag (with a `width=410px` for single column format or `width=700px` with a second column using `display`'s argument'):
+```html
+<img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic" width="410px" height="205px"/>
+ 
+<img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic?online=false&display=certifications" width="700px" height="205px"/>
+```
 
 ### Select Offline or Online Competitions
 
@@ -68,6 +76,17 @@ If `display=languages` you can use an extra argument `top=6` to specify the numb
 <p align="center">
     <img alt="Coverage" src="assets/badge_languages_top.svg" width="700px" height="205px"/>
 </p>
+
+### Current API limitation
+
+In order to reduce the number of request to Codingame's APIs. 
+
+- The result of the request is cached and will not change for 24 hours (Codingame's profiles are anyway updated only once a day).
+- A restriction of call is applied per IP address:
+  - 1 request every 5 seconds (this one may change as it could create issues if you put multiple badge on your profile)
+  - 60 requests every hour
+  - 200 requests every day
+- The returned image should be cached by the browser
 
 # Maths
 
