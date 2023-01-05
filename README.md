@@ -32,7 +32,7 @@ In your profile, you can choose to associate it with an online challenge or an o
 > Default: `online = false`
 
 ```md
-![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>?online=true)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=true)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_simple_category.svg" width="700px" height="205px"/>
@@ -45,7 +45,7 @@ You can decide to display or not a second section. This is done by setting the a
 > Default: `display = none`
 
 ```md
-![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>?online=false&display=certifications)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&display=certifications)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_certifications.svg" width="700px" height="205px"/>
@@ -56,14 +56,14 @@ If `display=languages` you can use an extra argument `top=6` to specify the numb
 > Default: `top = 6`
 
 ```md
-![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>?online=false&display=languages)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&display=languages)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_languages.svg" width="700px" height="205px"/>
 </p>
 
 ```md
-![your profile](http://<url-not-exiting-yet>/api/details/<your_codingamer_id>?online=false&display=languages&top=3)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&display=languages&top=3)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_languages_top.svg" width="700px" height="205px"/>
