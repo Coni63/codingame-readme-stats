@@ -223,6 +223,13 @@ venv/Scripts/activate.ps1
 pip install -r requirements.txt
 ```
 
+```sh
+cd api
+mkvirtualenv venv --python=/usr/bin/python3.10
+workon venv
+pip install -r requirements.txt
+```
+
 ### Run the Flask application
 
 You can run locally the application by running the following command and then go to
@@ -230,7 +237,7 @@ You can run locally the application by running the following command and then go
 
 ```sh
 cd api
-venv/Scripts/activate.ps1
+venv/Scripts/activate.ps1  # or source venv/bin/activate or workon venv
 python app.py
 ```
 
@@ -240,7 +247,7 @@ You can run tests / coverage simply by running the following commands:
 
 ```sh
 cd api
-venv/Scripts/activate.ps1
+venv/Scripts/activate.ps1  # or source venv/bin/activate or workon venv
 coverage run -m unittest discover
 ```
 
@@ -264,10 +271,11 @@ In case you install a new dependency, don't forget to update the requirements.tx
 
 ```sh
 cd api
-venv/Scripts/activate.ps1
+venv/Scripts/activate.ps1  # or source venv/bin/activate or workon venv
 pip freeze > requirements.txt
 ```
 
+### Other tutorials
 
-
-<!--https://nedbatchelder.com/blog/202209/making_a_coverage_badge.html-->
+- https://www.youtube.com/watch?v=4sTZN15J33A
+- https://nedbatchelder.com/blog/202209/making_a_coverage_badge.html

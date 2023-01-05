@@ -234,6 +234,9 @@ def render(data: IProfileDto, second_category=None, second_category_number=6) ->
                 svg = add_row(context, c2, get_height(i + offset), language)
                 list_other_svg.append(svg)
 
+        # Setting SVG unit
+        surface.set_document_unit(3)  # https://www.geeksforgeeks.org/pycairo-how-to-set-svg-unit/
+
     all_elements = [
         etree.XML(f.getvalue()),  # main card that we merge with external icons
         *list_other_svg

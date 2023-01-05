@@ -1,10 +1,21 @@
 from flask import Flask, request
 from flask_cors import CORS
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 from application.app_logic import get_svg_for_user
 
 app = Flask(__name__)
 CORS(app)
+
+
+# add a limit of requeste per IP address -- only valid in non debug mode for testing purposes
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["1/5seconds;60/hour;200/day"],
+    default_limits_exempt_when=lambda: app.debug
+)
 
 
 @app.route("/api/details/<codingamer>", methods=['GET'])
