@@ -28,6 +28,7 @@ FONT_NAME = "Lato"
  
 SVG_width_simple = 410
 SVG_width_double = 695
+SVG_width_triple = 980
 SVG_height = 205
 SVG_border_radius = 20
 

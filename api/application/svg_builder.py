@@ -171,17 +171,23 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # prag
     return place_icon(data.icon, x_start+30, y, from_CG=data.from_CG)
 
 
-def render(data: IProfileDto, second_category=None, second_category_number=6) -> str:  # pragma: no cover
+def render(data: IProfileDto, 
+           second_category: str = None, 
+           third_category: str = None, 
+           language_number: int = 6) -> str:  # pragma: no cover
 
     f = BytesIO()
 
     c1 = 160  # x position of the first section
     c2 = 410  # x position of the second section
+    c3 = 660  # x position of the second section
 
     if second_category is None:
         width_img = constants.SVG_width_simple
-    else:
+    elif third_category is None:
         width_img = constants.SVG_width_double
+    else:
+        width_img = constants.SVG_width_triple
 
     with cairo.SVGSurface(f, width_img, constants.SVG_height) as surface:
         # creating a cairo context object
@@ -227,11 +233,34 @@ def render(data: IProfileDto, second_category=None, second_category_number=6) ->
             draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
 
             # add text with relevant icons -- part from top languages
-            subset = data.lang_list[:second_category_number]  # if there is less than the requested number, no issue
+            subset = data.lang_list[:language_number]  # if there is less than the requested number, no issue
             num_elems = len(subset)
             offset = 4 - 0.5 * num_elems
             for i, language in enumerate(subset):
                 svg = add_row(context, c2, get_height(i + offset), language)
+                list_other_svg.append(svg)
+
+        if third_category == "certifications":
+            draw_line(context, c3, 55, c3, constants.SVG_height-20, constants.COLOR_LEGEND)
+
+            # add text with relevant icons -- part from certifications
+            SVG_collaboration = add_row(context, c3, get_height(1.5), data.certifications[0])
+            SVG_algorithmes   = add_row(context, c3, get_height(2.5), data.certifications[1])
+            SVG_optimization  = add_row(context, c3, get_height(3.5), data.certifications[2])
+            SVG_speed         = add_row(context, c3, get_height(4.5), data.certifications[3])
+            SVG_AI            = add_row(context, c3, get_height(5.5), data.certifications[4])
+
+            list_other_svg += [SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI]
+
+        elif third_category == "languages":
+            draw_line(context, c3, 55, c3, constants.SVG_height-20, constants.COLOR_LEGEND)
+
+            # add text with relevant icons -- part from top languages
+            subset = data.lang_list[:language_number]  # if there is less than the requested number, no issue
+            num_elems = len(subset)
+            offset = 4 - 0.5 * num_elems
+            for i, language in enumerate(subset):
+                svg = add_row(context, c3, get_height(i + offset), language)
                 list_other_svg.append(svg)
 
         # Setting SVG unit
