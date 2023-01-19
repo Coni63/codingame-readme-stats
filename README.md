@@ -11,7 +11,7 @@
 
 <p align="center">
     Inspired by <a href="https://github.com/anuraghazra/github-readme-stats" target="_blank">github-readme-stats</a>, I wanted to make a similar tool for codingame profiles. <br><br>
-    <img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic?online=false&display=certifications" width="700px" height="205px"/>
+    <img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic?online=false&second=certifications" width="640px" height="220px"/>
 </p>
 
 # How to use
@@ -26,11 +26,11 @@
 - Replace the `<your_codingamer_id>` with your id. your codingamer ID can be found in the url of your own profile `https://www.codingame.com/profile/<your_codingamer_id>`
 - That is it 👍.
 
-You can also use `<img>` html tag (with a `width=410px` for single column format or `width=700px` with a second column using `display`'s argument'):
+You can also use `<img>` html tag (with a `width=410px` for single column format or `width=640px` with a second column and `width=890px` with the third category'):
 ```html
-<img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic" width="410px" height="205px"/>
+<img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic" width="410px" height="220px"/>
  
-<img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic?online=false&display=certifications" width="700px" height="205px"/>
+<img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic?online=false&second=certifications" width="640px" height="220px"/>
 ```
 
 ### Select Offline or Online Competitions
@@ -43,39 +43,54 @@ In your profile, you can choose to associate it with an online challenge or an o
 ![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=true)
 ```
 <p align="center">
-    <img alt="Coverage" src="assets/badge_simple_category.svg" width="700px" height="205px"/>
+    <img alt="Coverage" src="assets/badge_simple_category.svg" width="640px" height="220px"/>
 </p>
 
 ### Select the second category
 
-You can decide to display or not a second section. This is done by setting the argument `display=languages|certifications|none`. 
+You can decide to display or not a second section. This is done by setting the argument `second=languages|certifications`. 
 
-> Default: `display = none`
+> Default: `second = none`
 
 ```md
-![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&display=certifications)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&second=certifications)
 ```
 <p align="center">
-    <img alt="Coverage" src="assets/badge_certifications.svg" width="700px" height="205px"/>
+    <img alt="Coverage" src="assets/badge_certifications.svg" width="640px" height="220px"/>
 </p>
 
-If `display=languages` you can use an extra argument `top=6` to specify the number of languages to display (max = 6)
+If `second=languages` you can use an extra argument `top=6` to specify the number of languages to display (max = 6)
 
 > Default: `top = 6`
 
 ```md
-![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&display=languages)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&second=languages)
 ```
 <p align="center">
-    <img alt="Coverage" src="assets/badge_languages.svg" width="700px" height="205px"/>
+    <img alt="Coverage" src="assets/badge_languages.svg" width="640px" height="220px"/>
 </p>
 
 ```md
-![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&display=languages&top=3)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&second=languages&top=3)
 ```
 <p align="center">
-    <img alt="Coverage" src="assets/badge_languages_top.svg" width="700px" height="205px"/>
+    <img alt="Coverage" src="assets/badge_languages_top.svg" width="640px" height="220px"/>
 </p>
+
+### Select the third category
+
+The same way as `second`'s argument, you can have a third one using `third=languages|certifications`. 
+
+> Default: `third = none`
+
+```md
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?online=false&second=certifications&third=languages&top=3)
+```
+<p align="center">
+    <img alt="Coverage" src="assets/badge_full.svg" width="890px" height="220px"/>
+</p>
+
+The `top` argument also apply here, if it's `languages`
 
 ### Current API limitation
 
