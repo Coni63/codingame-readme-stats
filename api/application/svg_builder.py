@@ -17,6 +17,15 @@ from domain import IProfileDto, IValue
 ##########################
 
 
+def human_format(num: int) -> str:
+    num = float('{:.3g}'.format(num))
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    return '{}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'), ['', 'k', 'm'][magnitude])
+
+
 def get_scale(element_height: int | str, target_height: int = 20) -> float:
     if not isinstance(element_height, str) and not isinstance(element_height, int):
         raise ValueError("invalid element_height")

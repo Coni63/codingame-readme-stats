@@ -1,6 +1,6 @@
 import unittest
 
-from application.svg_builder import get_scale, hex_to_rgb
+from application.svg_builder import get_scale, hex_to_rgb, human_format
 
 
 class TestRendererMethods(unittest.TestCase):
@@ -36,3 +36,21 @@ class TestRendererMethods(unittest.TestCase):
 
         with self.assertRaises(ValueError):
             hex_to_rgb("#ZZ00AA")  # invalid letter
+
+    def test_human_format(self):
+        self.assertEqual(human_format(1), "1")
+        self.assertEqual(human_format(9), "9")
+        self.assertEqual(human_format(10), "10")
+        self.assertEqual(human_format(99), "99")
+        self.assertEqual(human_format(100), "100")
+        self.assertEqual(human_format(999), "999")
+        self.assertEqual(human_format(1000), "1k")
+        self.assertEqual(human_format(1234), "1.23k")
+        self.assertEqual(human_format(9999), "10k")
+        self.assertEqual(human_format(10000), "10k")
+        self.assertEqual(human_format(12345), "12.3k")
+        self.assertEqual(human_format(99999), "100k")
+        self.assertEqual(human_format(100000), "100k")
+        self.assertEqual(human_format(999999), "1m")
+        self.assertEqual(human_format(1000000), "1m")
+        self.assertEqual(human_format(9999999), "10m")
