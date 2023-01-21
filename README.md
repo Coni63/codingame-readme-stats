@@ -254,6 +254,7 @@ cd codingame-readme-stats
 cd api
 python -m venv venv
 venv/Scripts/activate.ps1
+cd ..
 pip install -r requirements.txt
 ```
 
@@ -261,6 +262,7 @@ pip install -r requirements.txt
 cd api
 mkvirtualenv venv --python=/usr/bin/python3.10
 workon venv
+cd ..
 pip install -r requirements.txt
 ```
 
@@ -306,6 +308,7 @@ In case you install a new dependency, don't forget to update the requirements.tx
 ```sh
 cd api
 venv/Scripts/activate.ps1  # or source venv/bin/activate or workon venv
+cd ..
 pip freeze > requirements.txt
 ```
 
