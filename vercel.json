@@ -1,9 +1,11 @@
 {
     "builds": [
       {
+        "buildCommand": "sudo apt-get install pkg-config libcairo2-dev"
+      },
+      {
         "src": "api/app.py",
         "use": "@vercel/python",
-        "buildCommand": "sudo apt-get install pkg-config libcairo2-dev"
       }
     ],
     "routes": [
