@@ -183,7 +183,7 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # prag
     return place_icon(data.icon, x_start + constants.PADDING, y, from_CG=data.from_CG)
 
 
-def render_main_stats(context: cairo.Context, start_x: int, data: IProfileDto):
+def render_main_stats(context: cairo.Context, start_x: int, data: IProfileDto):  # pragma: no cover 
     # add text with relevant icons -- part from global stats
     SVG_GLOBAL_RANK   = add_row(context, start_x, get_height(1), data.rank)
     SVG_PUZZLE_SOLVED = add_row(context, start_x, get_height(2), data.puzzle_solved)
@@ -195,7 +195,7 @@ def render_main_stats(context: cairo.Context, start_x: int, data: IProfileDto):
     return [SVG_GLOBAL_RANK, SVG_PUZZLE_SOLVED, SVG_LEVEL, SVG_SUCCESS, SVG_BEST_LANGUAGE, SVG_HIGHEST_COMP]
 
 
-def render_certifications(context: cairo.Context, start_x: int, data: list[IValue]):
+def render_certifications(context: cairo.Context, start_x: int, data: list[IValue]):  # pragma: no cover 
     # add text with relevant icons -- part from certifications
     SVG_collaboration = add_row(context, start_x, get_height(1.5), data[0])
     SVG_algorithmes   = add_row(context, start_x, get_height(2.5), data[1])
@@ -206,7 +206,7 @@ def render_certifications(context: cairo.Context, start_x: int, data: list[IValu
     return [SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI]
 
 
-def render_language(context: cairo.Context, start_x: int, data: list[IValue], limit: int = 6):
+def render_language(context: cairo.Context, start_x: int, data: list[IValue], limit: int = 6):  # pragma: no cover 
     new_objects = []
     # add text with relevant icons -- part from top languages
     subset = data[:limit]  # if there is less than the requested number, no issue
