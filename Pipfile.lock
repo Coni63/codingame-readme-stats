@@ -1,11 +1,11 @@
 [[source]]
-url = "https://pypi.org/simple"
+url = 'https://pypi.org/simple'
 verify_ssl = true
-name = "pypi"
+name = 'pypi'
 
 [packages]
-flask = "*"
-pycairo = "1.23.0"
+flask = '2.2.2'
+pycairo = '1.23'
 
 [requires]
-python_version = "3.9"
+python_version = '3.9'
