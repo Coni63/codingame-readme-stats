@@ -238,11 +238,12 @@ def get_score_achievements(achievements: list[IAchievementDto]) -> IValue:
         count_available += 1
 
     return IValue(
-        value=f"{count_solved}/{count_available}",
         color=get_color(total_solved / total_available, thresholds, ascending=True),
         title="Success",
         icon=constants.SVG_SUCCESS,
-        from_CG=False
+        from_CG=False,
+        numerator=count_solved,
+        denominator=count_available,
     )
 
 
@@ -261,11 +262,12 @@ def get_score_rank(user: IUserDto) -> IValue:
     last_rank = user.codingamePointsRankingDto.numberCodingamersGlobal
 
     return IValue(
-        value=f"{rank}/{last_rank}", 
         color=get_color(rank, thresholds, ascending=False),
         title="Global Rank",
         icon=constants.SVG_GLOBAL_RANK,
-        from_CG=False
+        from_CG=False,
+        numerator=rank,
+        denominator=last_rank,
     )
 
 
@@ -295,11 +297,12 @@ def get_score_competition(rankings, online=False):
 
         points = get_points_from_rank(top.ranking, top.total)
         return IValue(
-            value=f"{top.ranking}/{top.total}", 
             color=get_color(points, thresholds, ascending=True),
             title="Highest Compet.",
             icon=constants.SVG_HIGHEST_COMP,
-            from_CG=False
+            from_CG=False,
+            numerator=top.ranking,
+            denominator=top.total,
         )
     else:
         f = [x for x in rankings.puzzles if x.puzzleType == "BOT_PROGRAMMING"]
@@ -315,11 +318,12 @@ def get_score_competition(rankings, online=False):
 
         top = max(f, key=lambda x: x.points)
         return IValue(
-            value=f"{top.ranking}/{top.totalPlayers}", 
             color=get_color(top.points, thresholds, ascending=True),
             title="Highest Compet.",
             icon=constants.SVG_HIGHEST_COMP,
-            from_CG=False
+            from_CG=False,
+            numerator=top.ranking,
+            denominator=top.totalPlayers,
         )
 
 

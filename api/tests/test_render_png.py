@@ -30,8 +30,13 @@ class TestRendererMethods(unittest.TestCase):
         with open(img_location, "wb") as f:
             f.write(svg)
 
-        svg = svg_builder.render(profile_data, second_category="languages", second_category_number=3)
+        svg = svg_builder.render(profile_data, second_category="languages", language_number=3)
         img_location = root / "badge_languages_top.svg"
+        with open(img_location, "wb") as f:
+            f.write(svg)
+
+        svg = svg_builder.render(profile_data, second_category="languages", third_category="certifications", language_number=3)
+        img_location = root / "badge_full.svg"
         with open(img_location, "wb") as f:
             f.write(svg)
 

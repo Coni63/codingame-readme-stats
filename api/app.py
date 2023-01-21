@@ -23,17 +23,24 @@ def get_card_for(codingamer):
     online_str = request.args.get('online', "false")
     online = online_str.lower() == "true"
 
-    second_category = request.args.get('display')
+    second_category = request.args.get('second')
     if second_category not in ["certifications", "languages"]:
         second_category = None
 
-    second_category_number_str = request.args.get('top', "6")
-    second_category_number = int(second_category_number_str)
+    third_category = request.args.get('third')
+    if third_category not in ["certifications", "languages"]:
+        third_category = None
+
+    language_number_str = request.args.get('top', "6")
+    language_number = int(language_number_str)
+
+    print(second_category, third_category)
 
     svg = get_svg_for_user(codingamer, 
                            online=online, 
                            second_category=second_category, 
-                           second_category_number=second_category_number)
+                           third_category=third_category, 
+                           language_number=language_number)
 
     if svg is not None:
         return svg, 200

@@ -1,6 +1,7 @@
 import aiohttp
 import asyncio
-import re 
+import re
+
 from infrastructure import codingame_api
 
 from domain import (
@@ -9,7 +10,8 @@ from domain import (
     ICertificationDto, 
     IAchievementDto, 
     IDataDto, 
-    IRankingDto
+    IRankingDto,
+    IHistoricsDto
 )
 
 
@@ -18,7 +20,13 @@ async def _get_user_data(codingamer: str, session: aiohttp.ClientSession) -> IUs
         user_json  = await codingame_api.get_info_for(codingamer, session)
         if user_json is None:  # handle non existing codingamer
             raise ValueError("invalid Codingamer")
-        return IUserDto.from_dict(user_json)
+
+        user: IUserDto = IUserDto.from_dict(user_json)
+
+        # empty history of ranks -- not used and use lot of memory
+        user.codingamePointsRankingDto.rankHistorics = IHistoricsDto()
+
+        return user
     except Exception as e:
         raise e
 

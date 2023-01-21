@@ -5,7 +5,7 @@ from domain import evaluator
 from infrastructure import cache_manager
 
 
-def get_svg_for_user(codingamer, online: bool, second_category: str, second_category_number: str):
+def get_svg_for_user(codingamer, online: bool, second_category: str, third_category: str, language_number: int):
 
     user_datas = cache_manager.load_data(codingamer)
 
@@ -18,7 +18,7 @@ def get_svg_for_user(codingamer, online: bool, second_category: str, second_cate
 
     try:
         profile_data = evaluator.evaluate(user_datas, online=online)
-        svg = svg_builder.render(profile_data, second_category, second_category_number)
+        svg = svg_builder.render(profile_data, second_category, third_category, language_number)
     except Exception:
         return None
 

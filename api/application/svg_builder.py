@@ -17,6 +17,15 @@ from domain import IProfileDto, IValue
 ##########################
 
 
+def human_format(num: int) -> str:
+    num = float('{:.3g}'.format(num))
+    magnitude = 0
+    while abs(num) >= 1000:
+        magnitude += 1
+        num /= 1000.0
+    return '{}{}'.format('{:f}'.format(num).rstrip('0').rstrip('.'), ['', 'k', 'm'][magnitude])
+
+
 def get_scale(element_height: int | str, target_height: int = 20) -> float:
     if not isinstance(element_height, str) and not isinstance(element_height, int):
         raise ValueError("invalid element_height")
@@ -37,8 +46,8 @@ def hex_to_rgb(value: str):
     return (int(r, 16) / 255.0, int(g, 16) / 255.0, int(b, 16) / 255.0)
 
 
-def get_height(n: int = 1, padding: int = 26, top_offset: int = 45):  # pragma: no cover
-    return (n - 1) * padding + top_offset
+def get_height(n: int = 1):  # pragma: no cover
+    return (n - 1) * constants.TEXT_PADDING + constants.Y_TOP
 
 
 ##########################
@@ -64,15 +73,17 @@ def get_square(context: cairo.Context, x: int, y: int, bg_color: str):  # pragma
 
 def set_text(context: cairo.Context, 
              x: int, y: int, text: str, 
-             bg_color: str, font_size: int=12):  # pragma: no cover
-    # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
-    offset_text = 0.5 * font_size + 10  
-    context.set_source_rgb(*hex_to_rgb(bg_color))
+             font_color: str, font_size: int):  # pragma: no cover
+
+    context.set_source_rgb(*hex_to_rgb(font_color))
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
     context.set_font_size(font_size)
-    context.move_to(x, y + offset_text)
+    context.move_to(x, y)
     context.show_text(text)
     context.stroke()
+
+    xbearing, ybearing, width, height, xadvance, yadvance = context.text_extents(text)
+    return width
 
 
 def draw_line(context: cairo.Context,
@@ -119,26 +130,13 @@ def place_icon(svg_encoded: str, x: int, y: int,
 ##########################
 
 
-def get_title(context: cairo.Context, text: str, x: int, y: int,
-              font_color: str, font_size_big: int=35, font_size_small: int=25):  # pragma: no cover
-    color = hex_to_rgb(font_color)
-    context.set_source_rgb(*color)
-    context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-    context.set_font_size(font_size_big)
-    context.move_to(x, y)
-    context.show_text(text)
-    xbearing, ybearing, width, height, xadvance, yadvance = context.text_extents(text)
-
-    context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-    context.set_font_size(font_size_small)
-    context.move_to(x + width + 2, y)
-    context.show_text("'s profile")
-
-    context.stroke()
+def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str):  # pragma: no cover
+    w1 = set_text(context, x, y, text, font_color=font_color, font_size=constants.TITLE_FONT_SIZE)
+    set_text(context, x + w1 + 2, y, "'s profile", font_color=font_color, font_size=constants.LARGE_FONT_SIZE)
 
 
 def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
-               active_color: str, passive_color: str, label: str, font_size_big: int=35):  # pragma: no cover
+               active_color: str, passive_color: str, label: str):  # pragma: no cover
     start_angle = 3*math.pi/2
     end_angle = 3*math.pi/2 + 2*math.pi*score/100
 
@@ -156,7 +154,7 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
 
     context.set_source_rgb(*hex_to_rgb(active_color))
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-    context.set_font_size(font_size_big)
+    context.set_font_size(constants.TITLE_FONT_SIZE)
 
     # center the text within the circle
     (x_, y_, width, height, dx, dy) = context.text_extents(label)
@@ -166,22 +164,74 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
 
 
 def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # pragma: no cover 
-    get_square(context, x_start+30, y, data.color)
-    set_text(context, x_start+60, y, f"{data.title}:{data.value}", data.color)
-    return place_icon(data.icon, x_start+30, y, from_CG=data.from_CG)
+    get_square(context, x_start + constants.PADDING, y, data.color)
+
+    # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
+    offset_text = 0.5 * constants.NORMAL_FONT_SIZE + 10  
+    text_start = x_start + constants.ICON_SIZE + 2 * constants.PADDING
+
+    w1 = set_text(context, text_start, y + offset_text, f"{data.title}:",
+                  font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
+    if data.numerator is not None:
+        w2 = set_text(context, text_start + w1 + 2, y + offset_text, f"{human_format(data.numerator)}", 
+                      font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
+        w2 = set_text(context, text_start + w1 + w2 + 2, y + offset_text + 2, f"/{human_format(data.denominator)}", 
+                      font_color=data.color, font_size=constants.SMALL_FONT_SIZE)
+    else:
+        set_text(context, text_start + w1 + 2, y + offset_text, f"{data.value}",
+                 font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
+    return place_icon(data.icon, x_start + constants.PADDING, y, from_CG=data.from_CG)
 
 
-def render(data: IProfileDto, second_category=None, second_category_number=6) -> str:  # pragma: no cover
+def render_main_stats(context: cairo.Context, start_x: int, data: IProfileDto):  # pragma: no cover 
+    # add text with relevant icons -- part from global stats
+    SVG_GLOBAL_RANK   = add_row(context, start_x, get_height(1), data.rank)
+    SVG_PUZZLE_SOLVED = add_row(context, start_x, get_height(2), data.puzzle_solved)
+    SVG_LEVEL         = add_row(context, start_x, get_height(3), data.level)
+    SVG_SUCCESS       = add_row(context, start_x, get_height(4), data.achievements)
+    SVG_BEST_LANGUAGE = add_row(context, start_x, get_height(5), data.language)
+    SVG_HIGHEST_COMP  = add_row(context, start_x, get_height(6), data.competition)
+
+    return [SVG_GLOBAL_RANK, SVG_PUZZLE_SOLVED, SVG_LEVEL, SVG_SUCCESS, SVG_BEST_LANGUAGE, SVG_HIGHEST_COMP]
+
+
+def render_certifications(context: cairo.Context, start_x: int, data: list[IValue]):  # pragma: no cover 
+    # add text with relevant icons -- part from certifications
+    SVG_collaboration = add_row(context, start_x, get_height(1.5), data[0])
+    SVG_algorithmes   = add_row(context, start_x, get_height(2.5), data[1])
+    SVG_optimization  = add_row(context, start_x, get_height(3.5), data[2])
+    SVG_speed         = add_row(context, start_x, get_height(4.5), data[3])
+    SVG_AI            = add_row(context, start_x, get_height(5.5), data[4])
+
+    return [SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI]
+
+
+def render_language(context: cairo.Context, start_x: int, data: list[IValue], limit: int = 6):  # pragma: no cover 
+    new_objects = []
+    # add text with relevant icons -- part from top languages
+    subset = data[:limit]  # if there is less than the requested number, no issue
+    num_elems = len(subset)
+    offset = 4 - 0.5 * num_elems
+    for i, language in enumerate(subset):
+        svg = add_row(context, start_x, get_height(i + offset), language)
+        new_objects.append(svg)
+
+    return new_objects
+
+
+def render(data: IProfileDto, 
+           second_category: str = None, 
+           third_category: str = None, 
+           language_number: int = 6) -> str:  # pragma: no cover
 
     f = BytesIO()
 
-    c1 = 160  # x position of the first section
-    c2 = 410  # x position of the second section
-
     if second_category is None:
         width_img = constants.SVG_width_simple
-    else:
+    elif third_category is None:
         width_img = constants.SVG_width_double
+    else:
+        width_img = constants.SVG_width_triple
 
     with cairo.SVGSurface(f, width_img, constants.SVG_height) as surface:
         # creating a cairo context object
@@ -189,50 +239,57 @@ def render(data: IProfileDto, second_category=None, second_category_number=6) ->
 
         draw_borders(context, width_img, constants.SVG_height, data.active_color)
 
-        get_title(context, data.username, 20, 35, font_color=data.active_color)
+        get_title(context, data.username, x=20, y=35, font_color=data.active_color)
 
         # pie with score & note
-        y_pie = 35 + (constants.SVG_height - 35) // 2
-        create_pie(context, 80, y_pie, 50, data.score, active_color=data.active_color,
+        create_pie(context, constants.X_PIE, get_height(4), constants.RADIUS_PIE, data.score, active_color=data.active_color,
                    passive_color=data.passive_color, label=data.main_rank)
 
         # DRAW SEPARATOR
-        draw_line(context, c1, 55, c1, constants.SVG_height-20, data.active_color)
+        draw_line(context,
+                  constants.X_SECTION1, 
+                  get_height(1.5), 
+                  constants.X_SECTION1, 
+                  get_height(6.5), 
+                  data.active_color)
 
         list_other_svg = []
 
-        # add text with relevant icons -- part from global stats
-        SVG_GLOBAL_RANK   = add_row(context, c1, get_height(1), data.rank)
-        SVG_PUZZLE_SOLVED = add_row(context, c1, get_height(2), data.puzzle_solved)
-        SVG_LEVEL         = add_row(context, c1, get_height(3), data.level)
-        SVG_SUCCESS       = add_row(context, c1, get_height(4), data.achievements)
-        SVG_BEST_LANGUAGE = add_row(context, c1, get_height(5), data.language)
-        SVG_HIGHEST_COMP  = add_row(context, c1, get_height(6), data.competition)
-
-        list_other_svg += [SVG_GLOBAL_RANK, SVG_PUZZLE_SOLVED, SVG_LEVEL, SVG_SUCCESS, SVG_BEST_LANGUAGE, SVG_HIGHEST_COMP]
+        list_other_svg += render_main_stats(context, constants.X_SECTION1, data)
 
         if second_category == "certifications":
-            draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
-
-            # add text with relevant icons -- part from certifications
-            SVG_collaboration = add_row(context, c2, get_height(1.5), data.certifications[0])
-            SVG_algorithmes   = add_row(context, c2, get_height(2.5), data.certifications[1])
-            SVG_optimization  = add_row(context, c2, get_height(3.5), data.certifications[2])
-            SVG_speed         = add_row(context, c2, get_height(4.5), data.certifications[3])
-            SVG_AI            = add_row(context, c2, get_height(5.5), data.certifications[4])
-
-            list_other_svg += [SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI]
-
+            draw_line(context, 
+                      constants.X_SECTION2, 
+                      get_height(1.5), 
+                      constants.X_SECTION2, 
+                      get_height(6.5), 
+                      data.active_color)
+            list_other_svg += render_certifications(context, constants.X_SECTION2, data.certifications)
         elif second_category == "languages":
-            draw_line(context, c2, 55, c2, constants.SVG_height-20, constants.COLOR_LEGEND)
+            draw_line(context, 
+                      constants.X_SECTION2, 
+                      get_height(1.5), 
+                      constants.X_SECTION2, 
+                      get_height(6.5), 
+                      data.active_color)
+            list_other_svg += render_language(context, constants.X_SECTION2, data.lang_list, language_number)
 
-            # add text with relevant icons -- part from top languages
-            subset = data.lang_list[:second_category_number]  # if there is less than the requested number, no issue
-            num_elems = len(subset)
-            offset = 4 - 0.5 * num_elems
-            for i, language in enumerate(subset):
-                svg = add_row(context, c2, get_height(i + offset), language)
-                list_other_svg.append(svg)
+        if third_category == "certifications":
+            draw_line(context, 
+                      constants.X_SECTION3, 
+                      get_height(1.5),
+                      constants.X_SECTION3, 
+                      get_height(6.5), 
+                      data.active_color)
+            list_other_svg += render_certifications(context, constants.X_SECTION3, data.certifications)
+        elif third_category == "languages":
+            draw_line(context, 
+                      constants.X_SECTION3, 
+                      get_height(1.5), 
+                      constants.X_SECTION3, 
+                      get_height(6.5), 
+                      data.active_color)
+            list_other_svg += render_language(context, constants.X_SECTION3, data.lang_list, language_number)
 
         # Setting SVG unit
         surface.set_document_unit(3)  # https://www.geeksforgeeks.org/pycairo-how-to-set-svg-unit/
