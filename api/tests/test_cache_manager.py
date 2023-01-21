@@ -27,6 +27,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             certifications=ICertificationDto.schema().load(fake_data_1.FAKE_CERTIF, many=True),
             achievements=IAchievementDto.schema().load(fake_data_1.FAKE_ACHIVEMENTS, many=True),
             rankings=IRankingDto.from_dict(fake_data_1.FAKE_RANKING),
+            leaderboard=IRankingDto.from_dict(fake_data_1.FAKE_LEADERBOARD),
         )
 
     def setUp(self):

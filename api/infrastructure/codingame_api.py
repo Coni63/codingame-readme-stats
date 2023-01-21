@@ -61,6 +61,15 @@ async def get_ranking_for(userid: int, session: aiohttp.ClientSession) -> dict:
     return await _fetch(constants.CG_USER_RANKINGS, json, session)
 
 
+async def get_leaderboard_for(userid: int, session: aiohttp.ClientSession) -> dict:
+    if userid == 0:
+        await asyncio.sleep(0.01)
+        return fake_data.FAKE_LEADERBOARD
+
+    json = [userid]
+    return await _fetch(constants.CG_USER_LEADERBOARD, json, session)
+
+
 def get_points_from_rank(position: int, total: int, base: int = 5000) -> float:
     if position < 0: 
         raise ValueError("position must be a positive integer")

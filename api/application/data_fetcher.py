@@ -11,7 +11,8 @@ from domain import (
     IAchievementDto, 
     IDataDto, 
     IRankingDto,
-    IHistoricsDto
+    IHistoricsDto,
+    ILeaderboardDto
 )
 
 
@@ -29,6 +30,11 @@ async def _get_user_data(codingamer: str, session: aiohttp.ClientSession) -> IUs
         return user
     except Exception as e:
         raise e
+
+
+async def _get_leaderboard_by(userid: int, session: aiohttp.ClientSession) -> list[ILanguageDto]:
+    leaderboard_json = await codingame_api.get_leaderboard_for(userid, session)
+    return ILeaderboardDto.from_dict(leaderboard_json)
 
 
 async def _get_languages_used_by(userid: int, session: aiohttp.ClientSession) -> list[ILanguageDto]:
@@ -72,10 +78,11 @@ async def get_all_data(codingamer: str) -> IDataDto:
                     asyncio.ensure_future(_get_certifications_for(userid, session)),
                     asyncio.ensure_future(_get_achievements_for(userid, session)),
                     asyncio.ensure_future(_get_ranking_for(userid, session)),
+                    asyncio.ensure_future(_get_leaderboard_by(userid, session)),
                 ]
 
                 ans = await asyncio.gather(*tasks)
-                languages, certifications, achievements, rankings = ans
+                languages, certifications, achievements, rankings, leaderboard = ans
 
             return IDataDto(
                 user=user,
@@ -83,6 +90,7 @@ async def get_all_data(codingamer: str) -> IDataDto:
                 certifications=certifications,
                 achievements=achievements,
                 rankings=rankings,
+                leaderboard=leaderboard
             )
         except ValueError as e:
             raise e

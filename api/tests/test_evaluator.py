@@ -35,6 +35,7 @@ class TestEvaluatorMethods(unittest.TestCase):
                 certifications=ICertificationDto.schema().load(fake_data_1.FAKE_CERTIF, many=True),
                 achievements=IAchievementDto.schema().load(fake_data_1.FAKE_ACHIVEMENTS, many=True),
                 rankings=IRankingDto.from_dict(fake_data_1.FAKE_RANKING),
+                leaderboard=IRankingDto.from_dict(fake_data_1.FAKE_LEADERBOARD),
             ),
             IDataDto(
                 user=IUserDto.from_dict(fake_data_2.FAKE_USER),
@@ -42,6 +43,7 @@ class TestEvaluatorMethods(unittest.TestCase):
                 certifications=ICertificationDto.schema().load(fake_data_2.FAKE_CERTIF, many=True),
                 achievements=IAchievementDto.schema().load(fake_data_2.FAKE_ACHIVEMENTS, many=True),
                 rankings=IRankingDto.from_dict(fake_data_2.FAKE_RANKING),
+                leaderboard=IRankingDto.from_dict(fake_data_2.FAKE_LEADERBOARD),
             ),
             IDataDto(
                 user=IUserDto.from_dict(fake_data_3.FAKE_USER),
@@ -49,6 +51,7 @@ class TestEvaluatorMethods(unittest.TestCase):
                 certifications=ICertificationDto.schema().load(fake_data_3.FAKE_CERTIF, many=True),
                 achievements=IAchievementDto.schema().load(fake_data_3.FAKE_ACHIVEMENTS, many=True),
                 rankings=IRankingDto.from_dict(fake_data_3.FAKE_RANKING),
+                leaderboard=IRankingDto.from_dict(fake_data_3.FAKE_LEADERBOARD),
             ),
             IDataDto(
                 user=IUserDto.from_dict(fake_data_4.FAKE_USER),
@@ -56,6 +59,7 @@ class TestEvaluatorMethods(unittest.TestCase):
                 certifications=ICertificationDto.schema().load(fake_data_4.FAKE_CERTIF, many=True),
                 achievements=IAchievementDto.schema().load(fake_data_4.FAKE_ACHIVEMENTS, many=True),
                 rankings=IRankingDto.from_dict(fake_data_4.FAKE_RANKING),
+                leaderboard=IRankingDto.from_dict(fake_data_4.FAKE_LEADERBOARD),
             ),
         ]
 

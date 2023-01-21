@@ -5,6 +5,7 @@ CG_USER_CERTIFICATIONS = "https://www.codingame.com/services/QuestCertification/
 CG_USER_LANGUAGE       = "https://www.codingame.com/services/Puzzle/countSolvedPuzzlesByProgrammingLanguage"
 CG_USER_ACHIEVEMENTS   = "https://www.codingame.com/services/Achievement/findByCodingamerId"
 CG_USER_RANKINGS       = "https://www.codingame.com/services/CodinGamer/getMyConsoleInformation"
+CG_USER_LEADERBOARD    = "https://www.codingame.com/services/CodinGamer/findRankingPoints"
 CG_headers             = {
     "Content-Type": "application/json;charset=UTF-8",
     "accept": "application/json"
