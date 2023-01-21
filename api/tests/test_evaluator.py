@@ -134,51 +134,59 @@ class TestEvaluatorMethods(unittest.TestCase):
 
     def test_get_score_achievements(self):
         targets = [
-            ("127/146", constants.COLOR_GOLD),
-            ("137/146", constants.COLOR_LEGEND),
-            ("83/146", constants.COLOR_BRONZE),
-            ("15/146", constants.COLOR_WOOD),
+            (127, 146, constants.COLOR_GOLD),
+            (137, 146, constants.COLOR_LEGEND),
+            (83, 146, constants.COLOR_BRONZE),
+            (15, 146, constants.COLOR_WOOD),
         ]
-        for fake_user, (target_value, target_color) in zip(self.users, targets):
+        for fake_user, (target_numerator, target_denominator, target_color) in zip(self.users, targets):
             ans = get_score_achievements(fake_user.achievements)
-            self.assertEqual(ans.value, target_value)
+            self.assertIsNone(ans.value)
+            self.assertEqual(ans.numerator, target_numerator)
+            self.assertEqual(ans.denominator, target_denominator)
             self.assertEqual(ans.color, target_color)
 
     def test_get_score_rank(self):
         targets = [
-            ("664/637326", constants.COLOR_GOLD),
-            ("4/640418", constants.COLOR_LEGEND),
-            ("2411/640418", constants.COLOR_SILVER),
-            ("9902/640418", constants.COLOR_BRONZE),
+            (664, 637326, constants.COLOR_GOLD),
+            (4, 640418, constants.COLOR_LEGEND),
+            (2411, 640418, constants.COLOR_SILVER),
+            (9902, 640418, constants.COLOR_BRONZE),
         ]
-        for fake_user, (target_value, target_color) in zip(self.users, targets):
+        for fake_user, (target_numerator, target_denominator, target_color) in zip(self.users, targets):
             ans = get_score_rank(fake_user.user)
-            self.assertEqual(ans.value, target_value)
+            self.assertIsNone(ans.value)
+            self.assertEqual(ans.numerator, target_numerator)
+            self.assertEqual(ans.denominator, target_denominator)
             self.assertEqual(ans.color, target_color)
 
     def test_get_score_competition(self):
         # ONLINE
         targets = [
-            ("753/3509", constants.COLOR_BRONZE),
-            ("5/4228", constants.COLOR_LEGEND),
-            ("391/2162", constants.COLOR_BRONZE),
-            ("489/4955", constants.COLOR_SILVER),
+            (753, 3509, constants.COLOR_BRONZE),
+            (5, 4228, constants.COLOR_LEGEND),
+            (391, 2162, constants.COLOR_BRONZE),
+            (489, 4955, constants.COLOR_SILVER),
         ]
-        for fake_user, (target_value, target_color) in zip(self.users, targets):
+        for fake_user, (target_numerator, target_denominator, target_color) in zip(self.users, targets):
             ans = get_score_competition(fake_user.rankings, online=True)
-            self.assertEqual(ans.value, target_value)
+            self.assertIsNone(ans.value)
+            self.assertEqual(ans.numerator, target_numerator)
+            self.assertEqual(ans.denominator, target_denominator)
             self.assertEqual(ans.color, target_color)
 
         # OFFLINE
         targets = [
-            ("843/170225", constants.COLOR_LEGEND),
-            ("3/3962", constants.COLOR_LEGEND),
-            ("939/6267", constants.COLOR_SILVER),
-            ("693/6859", constants.COLOR_SILVER),
+            (843, 170225, constants.COLOR_LEGEND),
+            (3, 3962, constants.COLOR_LEGEND),
+            (939, 6267, constants.COLOR_SILVER),
+            (693, 6859, constants.COLOR_SILVER),
         ]
-        for fake_user, (target_value, target_color) in zip(self.users, targets):
+        for fake_user, (target_numerator, target_denominator, target_color) in zip(self.users, targets):
             ans = get_score_competition(fake_user.rankings, online=False)
-            self.assertEqual(ans.value, target_value)
+            self.assertIsNone(ans.value)
+            self.assertEqual(ans.numerator, target_numerator)
+            self.assertEqual(ans.denominator, target_denominator)
             self.assertEqual(ans.color, target_color)
 
     def test_get_score_list_language(self):

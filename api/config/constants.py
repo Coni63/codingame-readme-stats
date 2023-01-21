@@ -25,9 +25,14 @@ BACK_COLOR = {
 }
 
 FONT_NAME = "Lato"
+TITLE_FONT_SIZE = 35
+LARGE_FONT_SIZE = 25
+NORMAL_FONT_SIZE = 12
+SMALL_FONT_SIZE = 10
+
 PADDING = 15      # padding between separator and icons, icons and text
 TEXT_PADDING = 26 # padding between 2 rows of text, icons and text
-SPACE_BAR = 240   # spacing between 2 sections
+SPACE_BAR = 220   # spacing between 2 sections
 X_SECTION1 = 160  # x position of the first section
 X_SECTION2 = X_SECTION1 + SPACE_BAR      # x position of the second section
 X_SECTION3 = X_SECTION1 + 2 * SPACE_BAR  # x position of the third section

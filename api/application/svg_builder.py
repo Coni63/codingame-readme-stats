@@ -73,15 +73,17 @@ def get_square(context: cairo.Context, x: int, y: int, bg_color: str):  # pragma
 
 def set_text(context: cairo.Context, 
              x: int, y: int, text: str, 
-             bg_color: str, font_size: int=12):  # pragma: no cover
-    # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
-    offset_text = 0.5 * font_size + 10  
-    context.set_source_rgb(*hex_to_rgb(bg_color))
+             font_color: str, font_size: int):  # pragma: no cover
+
+    context.set_source_rgb(*hex_to_rgb(font_color))
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
     context.set_font_size(font_size)
-    context.move_to(x, y + offset_text)
+    context.move_to(x, y)
     context.show_text(text)
     context.stroke()
+
+    xbearing, ybearing, width, height, xadvance, yadvance = context.text_extents(text)
+    return width
 
 
 def draw_line(context: cairo.Context,
@@ -128,26 +130,13 @@ def place_icon(svg_encoded: str, x: int, y: int,
 ##########################
 
 
-def get_title(context: cairo.Context, text: str, x: int, y: int,
-              font_color: str, font_size_big: int=35, font_size_small: int=25):  # pragma: no cover
-    color = hex_to_rgb(font_color)
-    context.set_source_rgb(*color)
-    context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-    context.set_font_size(font_size_big)
-    context.move_to(x, y)
-    context.show_text(text)
-    xbearing, ybearing, width, height, xadvance, yadvance = context.text_extents(text)
-
-    context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-    context.set_font_size(font_size_small)
-    context.move_to(x + width + 2, y)
-    context.show_text("'s profile")
-
-    context.stroke()
+def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str):  # pragma: no cover
+    w1 = set_text(context, x, y, text, font_color=font_color, font_size=constants.TITLE_FONT_SIZE)
+    set_text(context, x + w1 + 2, y, "'s profile", font_color=font_color, font_size=constants.LARGE_FONT_SIZE)
 
 
 def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
-               active_color: str, passive_color: str, label: str, font_size_big: int=35):  # pragma: no cover
+               active_color: str, passive_color: str, label: str):  # pragma: no cover
     start_angle = 3*math.pi/2
     end_angle = 3*math.pi/2 + 2*math.pi*score/100
 
@@ -165,7 +154,7 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
 
     context.set_source_rgb(*hex_to_rgb(active_color))
     context.select_font_face(constants.FONT_NAME, cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_NORMAL)
-    context.set_font_size(font_size_big)
+    context.set_font_size(constants.TITLE_FONT_SIZE)
 
     # center the text within the circle
     (x_, y_, width, height, dx, dy) = context.text_extents(label)
@@ -176,7 +165,21 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
 
 def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # pragma: no cover 
     get_square(context, x_start + constants.PADDING, y, data.color)
-    set_text(context, x_start + constants.ICON_SIZE + 2 * constants.PADDING, y, f"{data.title}:{data.value}", data.color)
+
+    # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
+    offset_text = 0.5 * constants.NORMAL_FONT_SIZE + 10  
+    text_start = x_start + constants.ICON_SIZE + 2 * constants.PADDING
+
+    w1 = set_text(context, text_start, y + offset_text, f"{data.title}:",
+                  font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
+    if data.numerator is not None:
+        w2 = set_text(context, text_start + w1 + 2, y + offset_text, f"{human_format(data.numerator)}", 
+                      font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
+        w2 = set_text(context, text_start + w1 + w2 + 2, y + offset_text + 2, f"/{human_format(data.denominator)}", 
+                      font_color=data.color, font_size=constants.SMALL_FONT_SIZE)
+    else:
+        set_text(context, text_start + w1 + 2, y + offset_text, f"{data.value}",
+                 font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
     return place_icon(data.icon, x_start + constants.PADDING, y, from_CG=data.from_CG)
 
 

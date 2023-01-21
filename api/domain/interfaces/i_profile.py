@@ -4,11 +4,13 @@ from dataclasses import dataclass
 
 @dataclass
 class IValue:
-    value: str
     color: str
     title: str
     icon: str | None = None
     from_CG: bool | None = None
+    value: str | None = None
+    numerator: int | None = None
+    denominator: int | None = None
 
 
 @dataclass
