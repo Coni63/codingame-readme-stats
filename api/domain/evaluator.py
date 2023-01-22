@@ -9,6 +9,7 @@ from domain import (
     IAchievementDto,
     ICertificationDto,
     IUserDto,
+    ILeaderboardDto
 )
 
 from infrastructure.codingame_api import get_points_from_rank
@@ -23,6 +24,7 @@ def evaluate(data: IDataDto, online: bool = True) -> IProfileDto:  # pragma: no 
     rank_value = get_score_rank(data.user)
     comp_value = get_score_competition(data.rankings, online=online)
     lang_list = get_score_list_language(data.languages)
+    leaderboard_list = get_score_list_leaderboard(data.leaderboard)
 
     (active_color, passive_color, score, label) = get_main_level(
         level_value,
@@ -31,7 +33,8 @@ def evaluate(data: IDataDto, online: bool = True) -> IProfileDto:  # pragma: no 
         puzzle_solved_value,
         achievements_value,
         rank_value,
-        comp_value
+        comp_value,
+        leaderboard_list
     )
 
     return IProfileDto(
@@ -47,7 +50,8 @@ def evaluate(data: IDataDto, online: bool = True) -> IProfileDto:  # pragma: no 
         rank=rank_value,
         competition=comp_value,
         score=score,
-        lang_list=lang_list
+        lang_list=lang_list,
+        leaderboard=leaderboard_list
     )
 
 ##########################
@@ -327,13 +331,74 @@ def get_score_competition(rankings, online=False):
         )
 
 
+def get_score_list_leaderboard(data: ILeaderboardDto) -> list[IValue]:
+    thresholds = [(1 - (0.25)**i) for i in range(1, 5)]
+    val_global = IValue(
+        value=None, 
+        color=constants.COLOR_LEGEND,
+        title="Global",
+        icon=constants.SVG_GLOBAL_RANK,
+        from_CG=False,
+        numerator=data.globalPointsRankGlobal,
+        denominator=data.totalCodingamerGlobal.global_
+    )
+    val_challenge = IValue(
+        value=None, 
+        color=constants.COLOR_LEGEND,
+        title="Competition",
+        icon=constants.SVG_CONTEST,
+        from_CG=False,
+        numerator=data.contestPointsRankGlobal,
+        denominator=data.totalCodingamerGlobal.contest
+    )
+    val_bot_prog = IValue(
+        value=None, 
+        color=constants.COLOR_LEGEND,
+        title="AI battle",
+        icon=constants.SVG_AI_BATTLE,
+        from_CG=False,
+        numerator=data.botProgrammingPointsRankGlobal,
+        denominator=data.totalCodingamerGlobal.botProgramming
+    )
+    val_clash = IValue(
+        value=None, 
+        color=constants.COLOR_LEGEND,
+        title="Clashs",
+        icon=constants.SVG_CLASH,
+        from_CG=False,
+        numerator=data.clashPointsRankGlobal,
+        denominator=data.totalCodingamerGlobal.clash
+    )
+    val_optim = IValue(
+        value=None, 
+        color=constants.COLOR_LEGEND,
+        title="Optimization",
+        icon=constants.SVG_OPTIM,
+        from_CG=False,
+        numerator=data.optimPointsRankGlobal,
+        denominator=data.totalCodingamerGlobal.optim
+    )
+    val_codegolf = IValue(
+        value=None, 
+        color=constants.COLOR_LEGEND,
+        title="Codegolf",
+        icon=constants.SVG_CODEGOLF,
+        from_CG=False,
+        numerator=data.codegolfPointsRankGlobal,
+        denominator=data.totalCodingamerGlobal.codegolf
+    )
+
+    return [val_global, val_challenge, val_bot_prog, val_optim, val_clash, val_codegolf]
+
+
 def get_global_score(level_value: IValue,
                      certif_value: list[IValue],
                      top_language_value: IValue,
                      puzzle_solved_value: IValue,
                      achievements_value: IValue,
                      rank_value: IValue,
-                     comp_value: IValue
+                     comp_value: IValue,
+                     leaderboard_value:  list[IValue]
                      ) -> float:
     color_point = {
         constants.COLOR_WOOD: 0, 
@@ -350,6 +415,7 @@ def get_global_score(level_value: IValue,
         (achievements_value, 20),
         (rank_value, 100),
         (comp_value, 50),
+        (leaderboard_value, 15),
     ]
 
     points = 0

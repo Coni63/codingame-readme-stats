@@ -114,7 +114,7 @@ def decode_svg(svg_encoded: str) -> str:  # pragma: no cover
 
 
 def place_icon(svg_encoded: str, x: int, y: int,
-               line_color: str="#000000", from_CG: bool=True) -> svgutils.transform.SVGFigure:  # pragma: no cover
+               line_color: str = "none", from_CG: bool=True) -> svgutils.transform.SVGFigure:  # pragma: no cover
     figure = svgutils.transform.fromstring(decode_svg(svg_encoded))
     svg_element = figure.getroot()
     svg_element.moveto(x, y, get_scale(figure.height))
@@ -128,6 +128,13 @@ def place_icon(svg_encoded: str, x: int, y: int,
 ##########################
 # Fonctions to generate the svg figure
 ##########################
+
+def add_CG_logo(context: cairo.Context, img_width: int):
+    context.set_source_rgb(*hex_to_rgb(constants.COLOR_BG_CG))
+    roundrect(context, img_width-162, 8, 152, 18+6, 5)
+    list_other_svg = place_icon(constants.SVG_CG, img_width-160, 10, "#FF00FF", False),  # icon CG
+    context.fill()
+    return list_other_svg
 
 
 def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str):  # pragma: no cover
@@ -163,7 +170,7 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
     context.stroke()
 
 
-def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # pragma: no cover 
+def add_row(context: cairo.Context, x_start: int, y: int, data: IValue, line_color="#000000"):  # pragma: no cover 
     get_square(context, x_start + constants.PADDING, y, data.color)
 
     # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
@@ -180,7 +187,7 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue):  # prag
     else:
         set_text(context, text_start + w1 + 2, y + offset_text, f"{data.value}",
                  font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
-    return place_icon(data.icon, x_start + constants.PADDING, y, from_CG=data.from_CG)
+    return place_icon(data.icon, x_start + constants.PADDING, y, from_CG=data.from_CG, line_color=line_color)
 
 
 def render_main_stats(context: cairo.Context, start_x: int, data: IProfileDto):  # pragma: no cover 
@@ -204,6 +211,18 @@ def render_certifications(context: cairo.Context, start_x: int, data: list[IValu
     SVG_AI            = add_row(context, start_x, get_height(5.5), data[4])
 
     return [SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI]
+
+
+def render_leaderboard(context: cairo.Context, start_x: int, data: list[IValue]):  # pragma: no cover 
+    # add text with relevant icons -- part from certifications
+    SVG_global     = add_row(context, start_x, get_height(1), data[0])
+    SVG_contest    = add_row(context, start_x, get_height(2), data[1])
+    SVG_ai_battle  = add_row(context, start_x, get_height(3), data[2], line_color="none")
+    SVG_optim      = add_row(context, start_x, get_height(4), data[3])
+    SVG_clash      = add_row(context, start_x, get_height(5), data[4])
+    SVG_codegolf   = add_row(context, start_x, get_height(6), data[5], line_color="none")
+
+    return [SVG_contest, SVG_ai_battle, SVG_optim, SVG_clash, SVG_codegolf, SVG_global]
 
 
 def render_language(context: cairo.Context, start_x: int, data: list[IValue], limit: int = 6):  # pragma: no cover 
@@ -255,6 +274,8 @@ def render(data: IProfileDto,
 
         list_other_svg = []
 
+        list_other_svg += add_CG_logo(context, width_img)
+
         list_other_svg += render_main_stats(context, constants.X_SECTION1, data)
 
         if second_category == "certifications":
@@ -273,6 +294,14 @@ def render(data: IProfileDto,
                       get_height(6.5), 
                       data.active_color)
             list_other_svg += render_language(context, constants.X_SECTION2, data.lang_list, language_number)
+        elif second_category == "leaderboard":
+            draw_line(context, 
+                      constants.X_SECTION2, 
+                      get_height(1.5), 
+                      constants.X_SECTION2, 
+                      get_height(6.5), 
+                      data.active_color)
+            list_other_svg += render_leaderboard(context, constants.X_SECTION2, data.leaderboard)
 
         if third_category == "certifications":
             draw_line(context, 

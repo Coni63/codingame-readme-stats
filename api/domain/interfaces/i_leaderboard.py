@@ -17,20 +17,20 @@ class ILeaderboardCountDto:
 @dataclass
 class ILeaderboardDto:
     codingamerId: int
-    achievementPointsRankCountry: int
-    achievementPointsRankGlobal: int
-    botProgrammingPointsRankCountry: int
-    botProgrammingPointsRankGlobal: int
-    clashPointsRankCountry: int
-    clashPointsRankGlobal: int
-    codegolfPointsRankCountry: int
-    codegolfPointsRankGlobal: int
-    contestPointsRankCountry: int
-    contestPointsRankGlobal: int
-    globalPointsRankCountry: int
-    globalPointsRankGlobal: int
-    optimPointsRankCountry: int
-    optimPointsRankGlobal: int
     totalCodingamerCountry: ILeaderboardCountDto
     totalCodingamerGlobal: ILeaderboardCountDto
+    achievementPointsRankCountry: int = 0
+    achievementPointsRankGlobal: int = 0
+    botProgrammingPointsRankCountry: int = 0
+    botProgrammingPointsRankGlobal: int = 0
+    clashPointsRankCountry: int = 0
+    clashPointsRankGlobal: int = 0
+    codegolfPointsRankCountry: int = 0
+    codegolfPointsRankGlobal: int = 0
+    contestPointsRankCountry: int = 0
+    contestPointsRankGlobal: int = 0
+    globalPointsRankCountry: int = 0
+    globalPointsRankGlobal: int = 0
+    optimPointsRankCountry: int = 0
+    optimPointsRankGlobal: int = 0
     countryId: str = ""

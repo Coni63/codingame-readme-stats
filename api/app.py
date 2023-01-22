@@ -24,11 +24,11 @@ def get_card_for(codingamer):
     online = online_str.lower() == "true"
 
     second_category = request.args.get('second')
-    if second_category not in ["certifications", "languages"]:
+    if second_category not in ["certifications", "languages", "leaderboard"]:
         second_category = None
 
     third_category = request.args.get('third')
-    if third_category not in ["certifications", "languages"]:
+    if third_category not in ["certifications", "languages", "leaderboard"]:
         third_category = None
 
     language_number_str = request.args.get('top', "6")

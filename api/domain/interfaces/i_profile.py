@@ -28,3 +28,4 @@ class IProfileDto:
     rank: IValue
     competition: IValue
     lang_list: list[IValue]
+    leaderboard: list[IValue]

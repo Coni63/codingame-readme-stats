@@ -13,7 +13,7 @@ async def _fetch(url: str, data: dict, session: aiohttp.ClientSession) -> dict:
         if r.status == 200:
             return await r.json()
         else:
-            raise ValueError("invalid request --> status code : {r.status}")
+            raise ValueError(f"invalid request --> status code : {r.status}")
 
 
 async def get_info_for(codingamer: str, session: aiohttp.ClientSession) -> dict:
@@ -56,6 +56,12 @@ async def get_ranking_for(userid: int, session: aiohttp.ClientSession) -> dict:
     if userid == 0:
         await asyncio.sleep(0.01)
         return fake_data.FAKE_RANKING
+
+    await asyncio.sleep(0.01)
+    return {
+        "challenges": [],
+        "puzzles": [],
+    }
 
     json = [userid]
     return await _fetch(constants.CG_USER_RANKINGS, json, session)
