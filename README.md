@@ -235,7 +235,8 @@ C : score above 25/100
 
 # Future versions
 
-- add args to scale svg to a specific size
+- add light / dark themes
+- add leaderboard ranking
 
 Other ideas are welcome 😉
 
