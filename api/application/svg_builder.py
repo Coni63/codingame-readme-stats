@@ -190,16 +190,16 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue, line_col
     return place_icon(data.icon, x_start + constants.PADDING, y, from_CG=data.from_CG, line_color=line_color)
 
 
-def render_main_stats(context: cairo.Context, start_x: int, data: IProfileDto):  # pragma: no cover 
+def render_puzzle_stats(context: cairo.Context, start_x: int, data: IProfileDto):  # pragma: no cover 
     # add text with relevant icons -- part from global stats
-    SVG_GLOBAL_RANK   = add_row(context, start_x, get_height(1), data.rank)
-    SVG_PUZZLE_SOLVED = add_row(context, start_x, get_height(2), data.puzzle_solved)
-    SVG_LEVEL         = add_row(context, start_x, get_height(3), data.level)
-    SVG_SUCCESS       = add_row(context, start_x, get_height(4), data.achievements)
-    SVG_BEST_LANGUAGE = add_row(context, start_x, get_height(5), data.language)
-    SVG_HIGHEST_COMP  = add_row(context, start_x, get_height(6), data.competition)
+    SVG_PUZZLE_SOLVED = add_row(context, start_x, get_height(1), data.puzzle_solved)
+    SVG_LEVEL         = add_row(context, start_x, get_height(2), data.level)
+    SVG_SUCCESS       = add_row(context, start_x, get_height(3), data.achievements)
+    SVG_BEST_LANGUAGE = add_row(context, start_x, get_height(4), data.language)
+    SVG_HIGHEST_COMP  = add_row(context, start_x, get_height(5), data.competition)
+    SVG_HIGHEST_BOT   = add_row(context, start_x, get_height(6), data.bot_battle)
 
-    return [SVG_GLOBAL_RANK, SVG_PUZZLE_SOLVED, SVG_LEVEL, SVG_SUCCESS, SVG_BEST_LANGUAGE, SVG_HIGHEST_COMP]
+    return [SVG_PUZZLE_SOLVED, SVG_LEVEL, SVG_SUCCESS, SVG_BEST_LANGUAGE, SVG_HIGHEST_COMP, SVG_HIGHEST_BOT]
 
 
 def render_certifications(context: cairo.Context, start_x: int, data: list[IValue]):  # pragma: no cover 
@@ -238,7 +238,31 @@ def render_language(context: cairo.Context, start_x: int, data: list[IValue], li
     return new_objects
 
 
+def render_category(context: cairo.Context, start_x: int, category: str, data: IProfileDto, language_number=6):
+    if category is None:
+        return []
+
+    draw_line(context, 
+              start_x, 
+              get_height(1.5),
+              start_x, 
+              get_height(6.5), 
+              data.active_color)
+
+    if category == "certifications":
+        return render_certifications(context, start_x, data.certifications)
+    elif category == "languages":
+        return render_language(context, start_x, data.lang_list, language_number)
+    elif category == "leaderboard":
+        return render_leaderboard(context, start_x, data.leaderboard)
+    elif category == "puzzles":
+        return render_puzzle_stats(context, start_x, data)
+
+    return []
+
+
 def render(data: IProfileDto, 
+           first_category: str = "leaderboard",
            second_category: str = None, 
            third_category: str = None, 
            language_number: int = 6) -> str:  # pragma: no cover
@@ -264,61 +288,10 @@ def render(data: IProfileDto,
         create_pie(context, constants.X_PIE, get_height(4), constants.RADIUS_PIE, data.score, active_color=data.active_color,
                    passive_color=data.passive_color, label=data.main_rank)
 
-        # DRAW SEPARATOR
-        draw_line(context,
-                  constants.X_SECTION1, 
-                  get_height(1.5), 
-                  constants.X_SECTION1, 
-                  get_height(6.5), 
-                  data.active_color)
-
-        list_other_svg = []
-
-        list_other_svg += add_CG_logo(context, width_img)
-
-        list_other_svg += render_main_stats(context, constants.X_SECTION1, data)
-
-        if second_category == "certifications":
-            draw_line(context, 
-                      constants.X_SECTION2, 
-                      get_height(1.5), 
-                      constants.X_SECTION2, 
-                      get_height(6.5), 
-                      data.active_color)
-            list_other_svg += render_certifications(context, constants.X_SECTION2, data.certifications)
-        elif second_category == "languages":
-            draw_line(context, 
-                      constants.X_SECTION2, 
-                      get_height(1.5), 
-                      constants.X_SECTION2, 
-                      get_height(6.5), 
-                      data.active_color)
-            list_other_svg += render_language(context, constants.X_SECTION2, data.lang_list, language_number)
-        elif second_category == "leaderboard":
-            draw_line(context, 
-                      constants.X_SECTION2, 
-                      get_height(1.5), 
-                      constants.X_SECTION2, 
-                      get_height(6.5), 
-                      data.active_color)
-            list_other_svg += render_leaderboard(context, constants.X_SECTION2, data.leaderboard)
-
-        if third_category == "certifications":
-            draw_line(context, 
-                      constants.X_SECTION3, 
-                      get_height(1.5),
-                      constants.X_SECTION3, 
-                      get_height(6.5), 
-                      data.active_color)
-            list_other_svg += render_certifications(context, constants.X_SECTION3, data.certifications)
-        elif third_category == "languages":
-            draw_line(context, 
-                      constants.X_SECTION3, 
-                      get_height(1.5), 
-                      constants.X_SECTION3, 
-                      get_height(6.5), 
-                      data.active_color)
-            list_other_svg += render_language(context, constants.X_SECTION3, data.lang_list, language_number)
+        list_other_svg = [*add_CG_logo(context, width_img)]
+        list_other_svg += render_category(context, constants.X_SECTION1, first_category, data, language_number)
+        list_other_svg += render_category(context, constants.X_SECTION2, second_category, data, language_number)
+        list_other_svg += render_category(context, constants.X_SECTION3, third_category, data, language_number)
 
         # Setting SVG unit
         surface.set_document_unit(3)  # https://www.geeksforgeeks.org/pycairo-how-to-set-svg-unit/

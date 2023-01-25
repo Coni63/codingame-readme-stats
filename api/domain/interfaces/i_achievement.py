@@ -20,3 +20,11 @@ class IAchievementDto:
     weight: float
     unit: str = ""
     unlockText: str = ""
+
+    def can_count(self):
+        return self.categoryId not in ["coder", "social"]
+
+    def get_weight(self):
+        if self.completionTime > 0:
+            return True, self.weight
+        return False, self.weight

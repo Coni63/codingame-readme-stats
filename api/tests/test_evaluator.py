@@ -3,21 +3,18 @@ import warnings
 
 from marshmallow.warnings import RemovedInMarshmallow4Warning
 
-from domain.evaluator import (
-    get_score_level, 
-    get_score_certificate, 
-    get_score_best_language, 
-    get_score_total_solved, 
-    get_score_achievements, 
-    get_score_rank, 
-    get_score_competition,
-    get_main_level,
-    get_color,
-    get_score_list_language,
-)
+from domain.evaluator import get_color, get_points_from_rank
 from config import constants, fake_data_1, fake_data_2, fake_data_3, fake_data_4
 
-from domain import IUserDto, ILanguageDto, ICertificationDto, IAchievementDto, IDataDto, IRankingDto
+from domain import (
+    IUserDto, 
+    ILanguageDto, 
+    ICertificationDto, 
+    IAchievementDto, 
+    IDataDto, 
+    IRankingDto, 
+    ILeaderboardDto
+)
 
 
 class TestEvaluatorMethods(unittest.TestCase):
@@ -35,7 +32,7 @@ class TestEvaluatorMethods(unittest.TestCase):
                 certifications=ICertificationDto.schema().load(fake_data_1.FAKE_CERTIF, many=True),
                 achievements=IAchievementDto.schema().load(fake_data_1.FAKE_ACHIVEMENTS, many=True),
                 rankings=IRankingDto.from_dict(fake_data_1.FAKE_RANKING),
-                leaderboard=IRankingDto.from_dict(fake_data_1.FAKE_LEADERBOARD),
+                leaderboard=ILeaderboardDto.from_dict(fake_data_1.FAKE_LEADERBOARD),
             ),
             IDataDto(
                 user=IUserDto.from_dict(fake_data_2.FAKE_USER),
@@ -43,7 +40,7 @@ class TestEvaluatorMethods(unittest.TestCase):
                 certifications=ICertificationDto.schema().load(fake_data_2.FAKE_CERTIF, many=True),
                 achievements=IAchievementDto.schema().load(fake_data_2.FAKE_ACHIVEMENTS, many=True),
                 rankings=IRankingDto.from_dict(fake_data_2.FAKE_RANKING),
-                leaderboard=IRankingDto.from_dict(fake_data_2.FAKE_LEADERBOARD),
+                leaderboard=ILeaderboardDto.from_dict(fake_data_2.FAKE_LEADERBOARD),
             ),
             IDataDto(
                 user=IUserDto.from_dict(fake_data_3.FAKE_USER),
@@ -51,7 +48,7 @@ class TestEvaluatorMethods(unittest.TestCase):
                 certifications=ICertificationDto.schema().load(fake_data_3.FAKE_CERTIF, many=True),
                 achievements=IAchievementDto.schema().load(fake_data_3.FAKE_ACHIVEMENTS, many=True),
                 rankings=IRankingDto.from_dict(fake_data_3.FAKE_RANKING),
-                leaderboard=IRankingDto.from_dict(fake_data_3.FAKE_LEADERBOARD),
+                leaderboard=ILeaderboardDto.from_dict(fake_data_3.FAKE_LEADERBOARD),
             ),
             IDataDto(
                 user=IUserDto.from_dict(fake_data_4.FAKE_USER),
@@ -59,7 +56,7 @@ class TestEvaluatorMethods(unittest.TestCase):
                 certifications=ICertificationDto.schema().load(fake_data_4.FAKE_CERTIF, many=True),
                 achievements=IAchievementDto.schema().load(fake_data_4.FAKE_ACHIVEMENTS, many=True),
                 rankings=IRankingDto.from_dict(fake_data_4.FAKE_RANKING),
-                leaderboard=IRankingDto.from_dict(fake_data_4.FAKE_LEADERBOARD),
+                leaderboard=ILeaderboardDto.from_dict(fake_data_4.FAKE_LEADERBOARD),
             ),
         ]
 
@@ -95,7 +92,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             (9, constants.COLOR_WOOD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
-            ans = get_score_level(fake_user.user)
+            ans = fake_user.get_score_level()
             self.assertEqual(ans.value, target_value)
             self.assertEqual(ans.color, target_color)
 
@@ -107,7 +104,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             (5, "Wood", constants.COLOR_WOOD),
         ]
         for fake_user, (length, target_value, target_color) in zip(self.users, targets):
-            ans = get_score_certificate(fake_user.certifications)
+            ans = fake_user.get_score_certificate()
             self.assertEqual(len(ans), length)
             self.assertEqual(ans[0].value, target_value)
             self.assertEqual(ans[0].color, target_color)
@@ -120,7 +117,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             ("Swift", constants.COLOR_WOOD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
-            ans = get_score_best_language(fake_user.languages)
+            ans = fake_user.get_score_best_language()
             self.assertEqual(ans.value, target_value)
             self.assertEqual(ans.color, target_color)
 
@@ -132,7 +129,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             (4, constants.COLOR_WOOD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
-            ans = get_score_total_solved(fake_user.languages)
+            ans = fake_user.get_score_total_solved()
             self.assertEqual(ans.value, target_value)
             self.assertEqual(ans.color, target_color)
 
@@ -144,7 +141,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             (15, 146, constants.COLOR_WOOD),
         ]
         for fake_user, (target_numerator, target_denominator, target_color) in zip(self.users, targets):
-            ans = get_score_achievements(fake_user.achievements)
+            ans = fake_user.get_score_achievements()
             self.assertIsNone(ans.value)
             self.assertEqual(ans.numerator, target_numerator)
             self.assertEqual(ans.denominator, target_denominator)
@@ -158,7 +155,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             (9902, 640418, constants.COLOR_BRONZE),
         ]
         for fake_user, (target_numerator, target_denominator, target_color) in zip(self.users, targets):
-            ans = get_score_rank(fake_user.user)
+            ans = fake_user.get_score_rank()
             self.assertIsNone(ans.value)
             self.assertEqual(ans.numerator, target_numerator)
             self.assertEqual(ans.denominator, target_denominator)
@@ -173,7 +170,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             (489, 4955, constants.COLOR_SILVER),
         ]
         for fake_user, (target_numerator, target_denominator, target_color) in zip(self.users, targets):
-            ans = get_score_competition(fake_user.rankings, online=True)
+            ans = fake_user.get_score_competition(online=True)
             self.assertIsNone(ans.value)
             self.assertEqual(ans.numerator, target_numerator)
             self.assertEqual(ans.denominator, target_denominator)
@@ -187,7 +184,7 @@ class TestEvaluatorMethods(unittest.TestCase):
             (693, 6859, constants.COLOR_SILVER),
         ]
         for fake_user, (target_numerator, target_denominator, target_color) in zip(self.users, targets):
-            ans = get_score_competition(fake_user.rankings, online=False)
+            ans = fake_user.get_score_competition(online=False)
             self.assertIsNone(ans.value)
             self.assertEqual(ans.numerator, target_numerator)
             self.assertEqual(ans.denominator, target_denominator)
@@ -201,35 +198,57 @@ class TestEvaluatorMethods(unittest.TestCase):
             (1, constants.COLOR_WOOD),
         ]
         for fake_user, (target_value, target_color) in zip(self.users, targets):
-            ans = get_score_list_language(fake_user.languages)
+            ans = fake_user.get_score_list_language()
             self.assertEqual(len(ans), target_value)
             self.assertEqual(ans[0].color, target_color)
 
     def test_evaluate(self):
         targets = [
-            ("S+", constants.COLOR_LEGEND, 89),
-            ("S++", constants.COLOR_LEGEND, 100),
-            ("B", constants.COLOR_BRONZE, 42),
-            ("C", constants.COLOR_WOOD, 19),
+            ("S+", constants.COLOR_LEGEND, 80),
+            ("S++", constants.COLOR_LEGEND, 92),
+            ("S", constants.COLOR_GOLD, 69),
+            ("B", constants.COLOR_BRONZE, 38),
         ]
         for fake_user, (target_value, target_color, target_score) in zip(self.users, targets):
-            level_value = get_score_level(fake_user.user)
-            certif_value = get_score_certificate(fake_user.certifications)
-            top_language_value = get_score_best_language(fake_user.languages)
-            puzzle_solved_value = get_score_total_solved(fake_user.languages)
-            achievements_value = get_score_achievements(fake_user.achievements)
-            rank_value = get_score_rank(fake_user.user)
-            comp_value = get_score_competition(fake_user.rankings, online=False)
-
-            (active_color, passive_color, score, label) = get_main_level(
-                level_value,
-                certif_value,
-                top_language_value,
-                puzzle_solved_value,
-                achievements_value,
-                rank_value,
-                comp_value
-            )
+            (active_color, passive_color, score, label) = fake_user.get_main_level()
             self.assertEqual(label, target_value)
             self.assertEqual(active_color, target_color)
             self.assertTrue(abs(score - target_score) < 1)
+
+
+class TestPointsMethods(unittest.TestCase):
+
+    def test_winner(self):
+        N = 5000
+        for base in [500, 2000, 5000, 10000]:
+            self.assertEqual(get_points_from_rank(1, N, base=base), base)
+
+    def test_last(self):
+        N = 5000
+        for base in [500, 2000, 5000, 10000]:
+            self.assertEqual(get_points_from_rank(N, N, base=base), 1)
+
+    def test_known(self):
+        BASE = 2500  # Opti
+        self.assertEqual(get_points_from_rank(4098, 6090, base=BASE), 13)
+        self.assertEqual(get_points_from_rank(216, 399, base=BASE), 33)
+        self.assertEqual(get_points_from_rank(25, 990, base=BASE), 2068)
+        self.assertEqual(get_points_from_rank(44, 581, base=BASE), 1401)
+        self.assertEqual(get_points_from_rank(60, 358, base=BASE), 521)
+
+        BASE = 5000  # battle bot
+        self.assertEqual(get_points_from_rank(420, 2662, base=BASE), 1308)
+        self.assertEqual(get_points_from_rank(543, 6260, base=BASE), 2392)
+        self.assertEqual(get_points_from_rank(1754, 2815, base=BASE), 25)
+        self.assertEqual(get_points_from_rank(843, 170320, base=BASE), 4794)
+        self.assertEqual(get_points_from_rank(118, 267, base=BASE), 84)
+
+    def test_fail(self):
+        with self.assertRaises(ValueError):
+            get_points_from_rank(-2, 5000, base=100)
+
+        with self.assertRaises(ValueError):
+            get_points_from_rank(750, 500, base=100)
+
+        with self.assertRaises(ValueError):
+            get_points_from_rank(500, 5000, base=0)

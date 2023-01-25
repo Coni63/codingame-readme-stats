@@ -1,6 +1,5 @@
 import json
 import asyncio
-import math
 import aiohttp
 
 from config import constants
@@ -74,21 +73,3 @@ async def get_leaderboard_for(userid: int, session: aiohttp.ClientSession) -> di
 
     json = [userid]
     return await _fetch(constants.CG_USER_LEADERBOARD, json, session)
-
-
-def get_points_from_rank(position: int, total: int, base: int = 5000) -> float:
-    if position < 0: 
-        raise ValueError("position must be a positive integer")
-
-    if total < position: 
-        raise ValueError("position must be lower than or equal to the total number of participants")
-
-    if base <= 0: 
-        raise ValueError("base must be a positive integer")
-
-    if total == 0:  # Detective Pikaptcha has 0 total and 0 in rankings
-        return 0
-
-    b = int(base * min(total/500, 1))
-    p = (total - position + 1) / total
-    return round(math.pow(b, p))
