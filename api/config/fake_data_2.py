@@ -27154,3 +27154,38 @@ FAKE_RANKING = {
         }
     ]
 }
+
+FAKE_LEADERBOARD = {
+    "codingamerId": 1500515,
+    "globalPointsRankGlobal": 4,
+    "contestPointsRankGlobal": 13,
+    "achievementPointsRankGlobal": 3,
+    "codegolfPointsRankGlobal": 123,
+    "optimPointsRankGlobal": 8,
+    "botProgrammingPointsRankGlobal": 4,
+    "clashPointsRankGlobal": 74513,
+    "globalPointsRankCountry": 1,
+    "contestPointsRankCountry": 1,
+    "achievementPointsRankCountry": 1,
+    "codegolfPointsRankCountry": 4,
+    "optimPointsRankCountry": 1,
+    "botProgrammingPointsRankCountry": 1,
+    "clashPointsRankCountry": 3091,
+    "countryId": "DE",
+    "totalCodingamerGlobal": {
+        "global": 650739,
+        "contest": 49041,
+        "botProgramming": 206176,
+        "clash": 517839,
+        "optim": 32499,
+        "codegolf": 40925
+    },
+    "totalCodingamerCountry": {
+        "global": 25342,
+        "contest": 2225,
+        "botProgramming": 11093,
+        "clash": 18593,
+        "optim": 2063,
+        "codegolf": 2449
+    }
+}

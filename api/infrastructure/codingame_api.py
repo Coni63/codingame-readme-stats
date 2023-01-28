@@ -1,6 +1,5 @@
 import json
 import asyncio
-import math
 import aiohttp
 
 from config import constants
@@ -13,7 +12,7 @@ async def _fetch(url: str, data: dict, session: aiohttp.ClientSession) -> dict:
         if r.status == 200:
             return await r.json()
         else:
-            raise ValueError("invalid request --> status code : {r.status}")
+            raise ValueError(f"invalid request --> status code : {r.status}")
 
 
 async def get_info_for(codingamer: str, session: aiohttp.ClientSession) -> dict:
@@ -57,23 +56,20 @@ async def get_ranking_for(userid: int, session: aiohttp.ClientSession) -> dict:
         await asyncio.sleep(0.01)
         return fake_data.FAKE_RANKING
 
+    await asyncio.sleep(0.01)
+    return {
+        "challenges": [],
+        "puzzles": [],
+    }
+
     json = [userid]
     return await _fetch(constants.CG_USER_RANKINGS, json, session)
 
 
-def get_points_from_rank(position: int, total: int, base: int = 5000) -> float:
-    if position < 0: 
-        raise ValueError("position must be a positive integer")
+async def get_leaderboard_for(userid: int, session: aiohttp.ClientSession) -> dict:
+    if userid == 0:
+        await asyncio.sleep(0.01)
+        return fake_data.FAKE_LEADERBOARD
 
-    if total < position: 
-        raise ValueError("position must be lower than or equal to the total number of participants")
-
-    if base <= 0: 
-        raise ValueError("base must be a positive integer")
-
-    if total == 0:  # Detective Pikaptcha has 0 total and 0 in rankings
-        return 0
-
-    b = int(base * min(total/500, 1))
-    p = (total - position + 1) / total
-    return round(math.pow(b, p))
+    json = [userid]
+    return await _fetch(constants.CG_USER_LEADERBOARD, json, session)

@@ -20,24 +20,23 @@ limiter = Limiter(
 
 @app.route("/api/details/<codingamer>", methods=['GET'])
 def get_card_for(codingamer):
-    online_str = request.args.get('online', "false")
-    online = online_str.lower() == "true"
+    first_category = request.args.get('first')
+    if first_category not in ["certifications", "languages", "leaderboard", "puzzles"]:
+        first_category = "leaderboard"
 
     second_category = request.args.get('second')
-    if second_category not in ["certifications", "languages"]:
+    if second_category not in ["certifications", "languages", "leaderboard", "puzzles"]:
         second_category = None
 
     third_category = request.args.get('third')
-    if third_category not in ["certifications", "languages"]:
+    if third_category not in ["certifications", "languages", "leaderboard", "puzzles"]:
         third_category = None
 
     language_number_str = request.args.get('top', "6")
     language_number = int(language_number_str)
 
-    print(second_category, third_category)
-
     svg = get_svg_for_user(codingamer, 
-                           online=online, 
+                           first_category=first_category,
                            second_category=second_category, 
                            third_category=third_category, 
                            language_number=language_number)

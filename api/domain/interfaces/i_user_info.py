@@ -71,3 +71,9 @@ class IUserDto:
     xpThresholds: list[ILevelDto] = field(default_factory=lambda: [])
     codingamerPoints: int = 0
     achievementCount: int = 0
+
+    def get_level(self):
+        return self.codingamer.level
+
+    def get_pseudo(self):
+        return self.codingamer.pseudo
