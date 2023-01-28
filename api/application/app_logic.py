@@ -5,7 +5,7 @@ from domain import IProfileDto
 from infrastructure import cache_manager
 
 
-def get_svg_for_user(codingamer, online: bool, first_category: str, second_category: str, third_category: str, language_number: int):
+def get_svg_for_user(codingamer, first_category: str, second_category: str, third_category: str, language_number: int):
 
     user_datas = cache_manager.load_data(codingamer)
 
@@ -16,10 +16,10 @@ def get_svg_for_user(codingamer, online: bool, first_category: str, second_categ
         except ValueError as e:
             return {"message": str(e)}, 404
 
-    # try:
-    profile_data = IProfileDto.from_user(user_datas)
-    svg = svg_builder.render(profile_data, first_category, second_category, third_category, language_number)
-    # except Exception:
-        # return None
+    try:
+        profile_data = IProfileDto.from_user(user_datas)
+        svg = svg_builder.render(profile_data, first_category, second_category, third_category, language_number)
+    except Exception:
+        return None
 
     return svg
