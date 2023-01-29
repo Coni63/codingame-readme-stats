@@ -5,7 +5,12 @@ from domain import IProfileDto
 from infrastructure import cache_manager
 
 
-def get_svg_for_user(codingamer, first_category: str, second_category: str, third_category: str, language_number: int):
+def get_svg_for_user(codingamer, 
+                     first_category: str, 
+                     second_category: str, 
+                     third_category: str, 
+                     language_number: int, 
+                     night: bool=True):
 
     user_datas = cache_manager.load_data(codingamer)
 
@@ -18,7 +23,7 @@ def get_svg_for_user(codingamer, first_category: str, second_category: str, thir
 
     try:
         profile_data = IProfileDto.from_user(user_datas)
-        svg = svg_builder.render(profile_data, first_category, second_category, third_category, language_number)
+        svg = svg_builder.render(profile_data, first_category, second_category, third_category, language_number, night)
     except Exception:
         return None
 
