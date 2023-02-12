@@ -13,7 +13,7 @@ CORS(app)
 limiter = Limiter(
     get_remote_address,
     app=app,
-    default_limits=["1/5seconds;60/hour;200/day"],
+    default_limits=["60/hour;200/day"],
     default_limits_exempt_when=lambda: app.debug
 )
 

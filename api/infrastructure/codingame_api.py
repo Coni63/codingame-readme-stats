@@ -56,12 +56,6 @@ async def get_ranking_for(userid: int, session: aiohttp.ClientSession) -> dict:
         await asyncio.sleep(0.01)
         return fake_data.FAKE_RANKING
 
-    await asyncio.sleep(0.01)
-    return {
-        "challenges": [],
-        "puzzles": [],
-    }
-
     json = [userid]
     return await _fetch(constants.CG_USER_RANKINGS, json, session)
 
