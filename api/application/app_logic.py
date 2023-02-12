@@ -18,7 +18,7 @@ def get_svg_for_user(codingamer,
         try:
             user_datas = asyncio.run(data_fetcher.get_all_data(codingamer))
             cache_manager.save_data(codingamer, user_datas)
-        except ValueError as e:
+        except ValueError as e:  # user not found or other exceptions
             return {"message": str(e)}, 404
 
     try:

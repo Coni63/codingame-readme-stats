@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import datetime
 import pickle
+import glob
 from pathlib import Path
+from typing import Generator
 
 from domain import IDataDto
 from config import constants
@@ -10,7 +12,7 @@ from config import constants
 
 def load_data(codingamer: str, expiration_seconds=86400) -> IDataDto | None:
     outfile = constants.CACHE_PATH.format(codingamer=codingamer)
-    seconds = get_seconds_since_last_modified(outfile)
+    seconds = _get_seconds_since_last_modified(outfile)  # if the file does not exist, the time is 1e8
 
     if seconds > expiration_seconds:
         return None
@@ -24,7 +26,13 @@ def save_data(codingamer: str, user_datas: IDataDto):
         pickle.dump(user_datas, f)
 
 
-def get_seconds_since_last_modified(path: str) -> int:
+def list_cache() -> Generator[str]:
+    for file in glob.iglob(constants.CACHE_PATH.format(codingamer="*")):
+        p = Path(file)
+        yield p.stem
+
+
+def _get_seconds_since_last_modified(path: str) -> int:
     f = Path(path)
 
     if not f.is_file():
@@ -38,3 +46,4 @@ def get_seconds_since_last_modified(path: str) -> int:
     current_timestamp = datetime.datetime.timestamp(presentDate)
 
     return round(current_timestamp - last_modified_timestamp)
+

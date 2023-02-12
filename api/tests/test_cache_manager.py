@@ -40,19 +40,19 @@ class TestEvaluatorMethods(unittest.TestCase):
 
     def test_get_seconds_since_last_modified(self):
         f = Path(__file__)
-        seconds = cache_manager.get_seconds_since_last_modified(str(f))
+        seconds = cache_manager._get_seconds_since_last_modified(str(f))
         self.assertGreater(seconds, 0)
         self.assertLess(seconds, 1e8)
 
         f = Path(__file__).resolve().parent / "fot_existing_file.foo"
-        seconds = cache_manager.get_seconds_since_last_modified(str(f))
+        seconds = cache_manager._get_seconds_since_last_modified(str(f))
         self.assertEqual(seconds, 1e8)
 
     def test_create_file(self):
         cache_manager.save_data("magic", self.user)
 
         fake_file = constants.CACHE_PATH.format(codingamer="magic")
-        seconds = cache_manager.get_seconds_since_last_modified(fake_file)
+        seconds = cache_manager._get_seconds_since_last_modified(fake_file)
         self.assertGreaterEqual(seconds, 0)
         self.assertLess(seconds, 3)  # ensure file is found
 
@@ -71,3 +71,12 @@ class TestEvaluatorMethods(unittest.TestCase):
         # load inexisting
         test_data = cache_manager.load_data("invalid", expiration_seconds=86400)
         self.assertIsNone(test_data)
+
+    def test_list_files(self):
+        l_files = cache_manager.list_cache()
+        self.assertEqual(len(list(l_files)), 0)
+
+        cache_manager.save_data("magic", self.user)
+
+        l_files = cache_manager.list_cache()
+        self.assertEqual(len(list(l_files)), 1)
