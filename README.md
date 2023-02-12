@@ -55,9 +55,9 @@ You can set the column using the arguments:
 - `second` : default is "hidden"
 - `third` : default is "hidden"
 
-Finally, if you use `languages`, you can limit the number of visible languages with `top=n` with 1 <= n <= 6 (default = 6))
+If you use `languages`, you can limit the number of visible languages with `top=n` with 1 <= n <= 6 (default = 6))
 
-
+A dark mode is available using the argument `night` with `1`, `true` or `yes`.
 
 ```md
 ![your profile](https://sitenotexisting.foo/api/details/<your_codingamer_id>?first=leaderboard&second=certifications)
@@ -87,6 +87,13 @@ Finally, if you use `languages`, you can limit the number of visible languages w
     <img alt="Coverage" src="assets/badge_full.svg"/>
 </p>
 
+```md
+![your profile](https://sitenotexisting.foo/api/details/<your_codingamer_id>?first=leaderboard&second=puzzles&night=true)
+```
+<p align="center">
+    <img alt="Coverage" src="assets/badge_night.svg"/>
+</p>
+
 
 # Current API limitation
 
@@ -102,7 +109,6 @@ In order to reduce the number of request to Codingame's APIs.
 
 # Future versions
 
-- add light / dark themes
 - fix issue with CG's icon is single column format
 
 Other ideas are welcome 😉

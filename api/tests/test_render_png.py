@@ -35,8 +35,29 @@ class TestRendererMethods(unittest.TestCase):
         with open(img_location, "wb") as f:
             f.write(svg)
 
-        svg = svg_builder.render(profile_data, first_category="leaderboard", second_category="puzzles", third_category="certifications", language_number=3)
+        svg = svg_builder.render(profile_data, 
+                                 first_category="leaderboard", 
+                                 second_category="puzzles", 
+                                 third_category="certifications", 
+                                 language_number=3)
         img_location = root / "badge_full.svg"
+        with open(img_location, "wb") as f:
+            f.write(svg)
+
+        svg = svg_builder.render(profile_data, 
+                                 first_category="leaderboard", 
+                                 second_category="puzzles", 
+                                 third_category="certifications", 
+                                 language_number=3)
+        img_location = root / "badge_full.svg"
+        with open(img_location, "wb") as f:
+            f.write(svg)
+
+        svg = svg_builder.render(profile_data, 
+                                 first_category="leaderboard", 
+                                 second_category="puzzles",
+                                 night=True)
+        img_location = root / "badge_night.svg"
         with open(img_location, "wb") as f:
             f.write(svg)
 

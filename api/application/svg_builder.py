@@ -96,7 +96,12 @@ def draw_line(context: cairo.Context,
     context.stroke()
 
 
-def draw_borders(context: cairo.Context, width, height, color: str, line_thk: int=5):  # pragma: no cover
+def draw_borders(context: cairo.Context, width, height, color: str, line_thk: int=5, night=True):  # pragma: no cover
+    roundrect(context, 0, 0, width, height, constants.SVG_border_radius)
+    if night:
+        context.set_source_rgb(*hex_to_rgb(constants.COLOR_BG_CG))
+        context.fill_preserve()
+
     context.set_source_rgb(*hex_to_rgb(color))
     context.set_line_width(line_thk)
     roundrect(context, 0, 0, width, height, constants.SVG_border_radius)
@@ -129,12 +134,11 @@ def place_icon(svg_encoded: str, x: int, y: int,
 # Fonctions to generate the svg figure
 ##########################
 
-def add_CG_logo(context: cairo.Context, img_width: int):
-    context.set_source_rgb(*hex_to_rgb(constants.COLOR_BG_CG))
-    roundrect(context, img_width-162, 8, 152, 18+6, 5)
-    list_other_svg = place_icon(constants.SVG_CG, img_width-160, 10, "#FF00FF", False),  # icon CG
-    context.fill()
-    return list_other_svg
+def add_CG_logo(img_width: int, night: bool=False):
+    if night:
+        return place_icon(constants.SVG_CG_NIGHT, img_width-160, 10, "none", False),  # icon CG
+    else:
+        return place_icon(constants.SVG_CG, img_width-160, 10, "none", False),  # icon CG
 
 
 def get_title(context: cairo.Context, text: str, x: int, y: int, font_color: str):  # pragma: no cover
@@ -265,7 +269,8 @@ def render(data: IProfileDto,
            first_category: str = "leaderboard",
            second_category: str = None, 
            third_category: str = None, 
-           language_number: int = 6) -> str:  # pragma: no cover
+           language_number: int = 6,
+           night: bool = False) -> str:  # pragma: no cover
 
     f = BytesIO()
 
@@ -280,7 +285,7 @@ def render(data: IProfileDto,
         # creating a cairo context object
         context = cairo.Context(surface)
 
-        draw_borders(context, width_img, constants.SVG_height, data.active_color)
+        draw_borders(context, width_img, constants.SVG_height, data.active_color, night=night)
 
         get_title(context, data.username, x=20, y=35, font_color=data.active_color)
 
@@ -288,7 +293,7 @@ def render(data: IProfileDto,
         create_pie(context, constants.X_PIE, get_height(4), constants.RADIUS_PIE, data.score, active_color=data.active_color,
                    passive_color=data.passive_color, label=data.main_rank)
 
-        list_other_svg = [*add_CG_logo(context, width_img)]
+        list_other_svg = [*add_CG_logo(width_img, night=night)]
         list_other_svg += render_category(context, constants.X_SECTION1, first_category, data, language_number)
         list_other_svg += render_category(context, constants.X_SECTION2, second_category, data, language_number)
         list_other_svg += render_category(context, constants.X_SECTION3, third_category, data, language_number)
