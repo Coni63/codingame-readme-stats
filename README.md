@@ -25,7 +25,7 @@
 
 - Copy-paste this code snippet into your markdown content
 ```md
-![your profile](https://sitenotexisting.foo/api/details/<your_codingamer_id>)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>)
 ```
 
 - Replace the `<your_codingamer_id>` with your id. your codingamer ID can be found in the url of your own profile `https://www.codingame.com/profile/<your_codingamer_id>`
@@ -37,9 +37,9 @@ You can also use an `<img>` tag with a width of:
 - `width=830px` for a three-column format
 
 ```html
-<img alt="Coverage" src="https://sitenotexisting.foo/api/details/magic" width="410px" height="220px"/>
+<img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic" width="410px" height="220px"/>
  
-<img alt="Coverage" src="https://sitenotexisting.foo/api/details/magic?online=false&second=certifications" width="640px" height="220px"/>
+<img alt="Coverage" src="https://codingamereadmestats.pythonanywhere.com/api/details/magic?online=false&second=certifications" width="640px" height="220px"/>
 ```
 
 ### Select Categories
@@ -60,35 +60,35 @@ If you use `languages`, you can limit the number of visible languages with `top=
 A dark mode is available using the argument `night` with `1`, `true` or `yes`.
 
 ```md
-![your profile](https://sitenotexisting.foo/api/details/<your_codingamer_id>?first=leaderboard&second=certifications)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?first=leaderboard&second=certifications)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_certifications.svg"/>
 </p>
 
 ```md
-![your profile](https://sitenotexisting.foo/api/details/<your_codingamer_id>?first=leaderboard&second=languages)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?first=leaderboard&second=languages)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_languages.svg"/>
 </p>
 
 ```md
-![your profile](https://sitenotexisting.foo/api/details/<your_codingamer_id>?first=leaderboard&second=languages&top=3)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?first=leaderboard&second=languages&top=3)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_languages_top.svg"/>
 </p>
 
 ```md
-![your profile](https://sitenotexisting.foo/api/details/<your_codingamer_id>?first=leaderboard&second=puzzles&third=certifications)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?first=leaderboard&second=puzzles&third=certifications)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_full.svg"/>
 </p>
 
 ```md
-![your profile](https://sitenotexisting.foo/api/details/<your_codingamer_id>?first=leaderboard&second=puzzles&night=true)
+![your profile](https://codingamereadmestats.pythonanywhere.com/api/details/<your_codingamer_id>?first=leaderboard&second=puzzles&night=true)
 ```
 <p align="center">
     <img alt="Coverage" src="assets/badge_night.svg"/>

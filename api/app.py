@@ -38,17 +38,14 @@ def get_card_for(codingamer):
     night_str = request.args.get('night', "false").lower()
     night = night_str in ["1", "true", "yes"]
 
-    svg = get_svg_for_user(codingamer, 
-                           first_category=first_category,
-                           second_category=second_category, 
-                           third_category=third_category, 
-                           language_number=language_number,
-                           night=night)
+    svg, response_code = get_svg_for_user(codingamer, 
+                                          first_category=first_category,
+                                          second_category=second_category, 
+                                          third_category=third_category, 
+                                          language_number=language_number,
+                                          night=night)
 
-    if svg is not None:
-        return svg, 200
-    else:
-        return {"message": "error when generating the image"}, 500
+    return svg, response_code
 
 
 @app.after_request

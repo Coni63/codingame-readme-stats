@@ -24,7 +24,7 @@ def get_svg_for_user(codingamer,
     try:
         profile_data = IProfileDto.from_user(user_datas)
         svg = svg_builder.render(profile_data, first_category, second_category, third_category, language_number, night)
-    except Exception:
-        return None
+    except Exception as e:
+        return {"message": str(e)}, 500
 
-    return svg
+    return svg, 200
