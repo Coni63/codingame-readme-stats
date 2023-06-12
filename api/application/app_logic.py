@@ -10,6 +10,7 @@ def get_svg_for_user(codingamer,
                      second_category: str, 
                      third_category: str, 
                      language_number: int, 
+                     percent: bool=False,
                      night: bool=True):
 
     user_datas = cache_manager.load_data(codingamer)
@@ -23,7 +24,7 @@ def get_svg_for_user(codingamer,
 
     try:
         profile_data = IProfileDto.from_user(user_datas)
-        svg = svg_builder.render(profile_data, first_category, second_category, third_category, language_number, night)
+        svg = svg_builder.render(profile_data, first_category, second_category, third_category, language_number, percent, night)
     except Exception as e:
         return {"message": str(e)}, 500
 
