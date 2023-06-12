@@ -55,6 +55,8 @@ You can set the column using the arguments:
 - `second` : default is "hidden"
 - `third` : default is "hidden"
 
+If you use `leaderboard`, you can add percentage ranking using the argument `percent` with `1`, `true` or `yes`.
+
 If you use `languages`, you can limit the number of visible languages with `top=n` with 1 <= n <= 6 (default = 6))
 
 A dark mode is available using the argument `night` with `1`, `true` or `yes`.
