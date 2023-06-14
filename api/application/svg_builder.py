@@ -183,7 +183,7 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue, percent:
 
     w1 = set_text(context, text_start, y + offset_text, f"{data.title}:",
                   font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
-    if data.numerator is not None:
+    if data.numerator:
         w2 = set_text(context, text_start + w1 + 2, y + offset_text, f"{human_format(data.numerator)}", 
                       font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
         w3 = set_text(context, text_start + w1 + w2 + 2, y + offset_text + 2, f"/{human_format(data.denominator)}", 
@@ -191,6 +191,9 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue, percent:
         if percent and data.numerator > 0:
             w3 = set_text(context, text_start + w1 + w2 + w3 + 4, y + offset_text, f"(Top {data.percent_rank}%)", 
                       font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
+    elif data.numerator == 0:
+        set_text(context, text_start + w1 + 2, y + offset_text, "N/A",
+                 font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
     else:
         set_text(context, text_start + w1 + 2, y + offset_text, f"{data.value}",
                  font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
