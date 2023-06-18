@@ -174,7 +174,7 @@ def create_pie(context: cairo.Context, x: int, y: int, radius: int, score: int,
     context.stroke()
 
 
-def add_row(context: cairo.Context, x_start: int, y: int, data: IValue, line_color="#000000"):  # pragma: no cover 
+def add_row(context: cairo.Context, x_start: int, y: int, data: IValue, percent: bool=False, line_color="#000000"):  # pragma: no cover 
     get_square(context, x_start + constants.PADDING, y, data.color)
 
     # the image is 20px height and the text is font_size. So the shift is font_size + (20 - font_size) / 2
@@ -183,11 +183,17 @@ def add_row(context: cairo.Context, x_start: int, y: int, data: IValue, line_col
 
     w1 = set_text(context, text_start, y + offset_text, f"{data.title}:",
                   font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
-    if data.numerator is not None:
+    if data.numerator:
         w2 = set_text(context, text_start + w1 + 2, y + offset_text, f"{human_format(data.numerator)}", 
                       font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
-        w2 = set_text(context, text_start + w1 + w2 + 2, y + offset_text + 2, f"/{human_format(data.denominator)}", 
+        w3 = set_text(context, text_start + w1 + w2 + 2, y + offset_text + 2, f"/{human_format(data.denominator)}", 
                       font_color=data.color, font_size=constants.SMALL_FONT_SIZE)
+        if percent and data.numerator > 0:
+            w3 = set_text(context, text_start + w1 + w2 + w3 + 4, y + offset_text, f"(Top {data.percent_rank}%)", 
+                      font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
+    elif data.numerator == 0:
+        set_text(context, text_start + w1 + 2, y + offset_text, "N/A",
+                 font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
     else:
         set_text(context, text_start + w1 + 2, y + offset_text, f"{data.value}",
                  font_color=data.color, font_size=constants.NORMAL_FONT_SIZE)
@@ -217,14 +223,14 @@ def render_certifications(context: cairo.Context, start_x: int, data: list[IValu
     return [SVG_collaboration, SVG_algorithmes, SVG_optimization, SVG_speed, SVG_AI]
 
 
-def render_leaderboard(context: cairo.Context, start_x: int, data: list[IValue]):  # pragma: no cover 
+def render_leaderboard(context: cairo.Context, start_x: int, data: list[IValue], percent: bool = False):  # pragma: no cover 
     # add text with relevant icons -- part from certifications
-    SVG_global     = add_row(context, start_x, get_height(1), data[0])
-    SVG_contest    = add_row(context, start_x, get_height(2), data[1])
-    SVG_ai_battle  = add_row(context, start_x, get_height(3), data[2], line_color="none")
-    SVG_optim      = add_row(context, start_x, get_height(4), data[3])
-    SVG_clash      = add_row(context, start_x, get_height(5), data[4])
-    SVG_codegolf   = add_row(context, start_x, get_height(6), data[5], line_color="none")
+    SVG_global     = add_row(context, start_x, get_height(1), data[0], percent=percent)
+    SVG_contest    = add_row(context, start_x, get_height(2), data[1], percent=percent)
+    SVG_ai_battle  = add_row(context, start_x, get_height(3), data[2], percent=percent, line_color="none")
+    SVG_optim      = add_row(context, start_x, get_height(4), data[3], percent=percent)
+    SVG_clash      = add_row(context, start_x, get_height(5), data[4], percent=percent)
+    SVG_codegolf   = add_row(context, start_x, get_height(6), data[5], percent=percent, line_color="none")
 
     return [SVG_contest, SVG_ai_battle, SVG_optim, SVG_clash, SVG_codegolf, SVG_global]
 
@@ -242,7 +248,7 @@ def render_language(context: cairo.Context, start_x: int, data: list[IValue], li
     return new_objects
 
 
-def render_category(context: cairo.Context, start_x: int, category: str, data: IProfileDto, language_number=6):
+def render_category(context: cairo.Context, start_x: int, category: str, data: IProfileDto, language_number=6, percent: bool=False):
     if category is None:
         return []
 
@@ -258,7 +264,7 @@ def render_category(context: cairo.Context, start_x: int, category: str, data: I
     elif category == "languages":
         return render_language(context, start_x, data.lang_list, language_number)
     elif category == "leaderboard":
-        return render_leaderboard(context, start_x, data.leaderboard)
+        return render_leaderboard(context, start_x, data.leaderboard, percent)
     elif category == "puzzles":
         return render_puzzle_stats(context, start_x, data)
 
@@ -270,6 +276,7 @@ def render(data: IProfileDto,
            second_category: str = None, 
            third_category: str = None, 
            language_number: int = 6,
+           percent: bool = False,
            night: bool = False) -> str:  # pragma: no cover
 
     f = BytesIO()
@@ -280,6 +287,20 @@ def render(data: IProfileDto,
         width_img = constants.SVG_width_double
     else:
         width_img = constants.SVG_width_triple
+    
+    x_section2 = constants.X_SECTION1 + constants.SPACE_BAR
+    x_section3 = x_section2 + constants.SPACE_BAR
+    
+    show_percent = percent and "leaderboard" in [first_category,
+                                                 second_category,
+                                                 third_category]
+    
+    if show_percent:
+        width_img += constants.PERCENT_SIZE
+        if "leaderboard" in [first_category, second_category]:
+            x_section3 += constants.PERCENT_SIZE
+            if "leaderboard" == first_category:
+                x_section2 += constants.PERCENT_SIZE
 
     with cairo.SVGSurface(f, width_img, constants.SVG_height) as surface:
         # creating a cairo context object
@@ -294,9 +315,9 @@ def render(data: IProfileDto,
                    passive_color=data.passive_color, label=data.main_rank)
 
         list_other_svg = [*add_CG_logo(width_img, night=night)]
-        list_other_svg += render_category(context, constants.X_SECTION1, first_category, data, language_number)
-        list_other_svg += render_category(context, constants.X_SECTION2, second_category, data, language_number)
-        list_other_svg += render_category(context, constants.X_SECTION3, third_category, data, language_number)
+        list_other_svg += render_category(context, constants.X_SECTION1, first_category, data, language_number, percent)
+        list_other_svg += render_category(context, x_section2, second_category, data, language_number, percent)
+        list_other_svg += render_category(context, x_section3, third_category, data, language_number, percent)
 
         # Setting SVG unit
         surface.set_document_unit(3)  # https://www.geeksforgeeks.org/pycairo-how-to-set-svg-unit/

@@ -35,6 +35,9 @@ def get_card_for(codingamer):
     language_number_str = request.args.get('top', "6")
     language_number = int(language_number_str)
 
+    percent_str = request.args.get('percent', "false").lower()
+    percent = percent_str in ["1", "true", "yes"]
+
     night_str = request.args.get('night', "false").lower()
     night = night_str in ["1", "true", "yes"]
 
@@ -43,6 +46,7 @@ def get_card_for(codingamer):
                                           second_category=second_category, 
                                           third_category=third_category, 
                                           language_number=language_number,
+                                          percent=percent,
                                           night=night)
 
     return svg, response_code

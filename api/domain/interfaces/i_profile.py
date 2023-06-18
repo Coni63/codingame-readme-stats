@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+import math
+
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # https://adamj.eu/tech/2021/05/13/python-type-hints-how-to-fix-circular-imports/
@@ -17,6 +19,10 @@ class IValue:
     value: str | None = None
     numerator: int | None = None
     denominator: int | None = None
+
+    def __post_init__(self):
+        if self.denominator:
+            self.percent_rank = math.ceil(self.numerator / self.denominator * 1000) / 10
 
 
 @dataclass
